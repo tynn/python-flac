@@ -17,31 +17,11 @@
  *	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Python.h>
+#ifndef __format_h__
+#define __format_h__
 
-#include "format.h"
+int PyFLAC_FormatTypes_Ready ( void );
+int PyFLAC_PyModule_AddFormatObjects (PyObject *module);
 
-
-#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
-#define PyMODINIT_FUNC void
-#endif
-
-
-static PyMethodDef flac_methods[] = {
-	{ NULL }		/* Sentinel */
-};
-
-
-PyMODINIT_FUNC
-initflac ( void )
-{
-	PyObject *module;
-
-	if (PyFLAC_FormatTypes_Ready() < 0)
-		return;
-
-	module = Py_InitModule3("flac", flac_methods, "libFLAC");
-
-	PyFLAC_PyModule_AddFormatObjects(module);
-}
+#endif // __format_h__
 

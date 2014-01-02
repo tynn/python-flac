@@ -32,6 +32,7 @@ setup(
 		'flac',
 		sources = [
 			'flac/flac.c',
+			'flac/format.c',
 		],
 		libraries = ['FLAC']
 	)]
