@@ -38,7 +38,7 @@ PyFLAC_Format_MetadataType_Check (PyObject *object)
 
 
 PyObject *
-PyFLAC_Format_ChannelAssignment_New (FLAC__ChannelAssignment e_value)
+PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value)
 {
 	PyObject *py_value;
 
