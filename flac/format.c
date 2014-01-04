@@ -52,7 +52,7 @@ PyFLAC_Format_ChannelAssignment_New (FLAC__ChannelAssignment e_value)
 }
 
 
-static void
+static int
 enum_ChannelAssignment ( void )
 {
 	PyObject *enum_member;
@@ -79,10 +79,11 @@ enum_ChannelAssignment ( void )
 	)
 
 	PyFLAC_ENUM_LOCK(ChannelAssignment)
+	return 0;
 }
 
 
-static void
+static int
 enum_MetadataType ( void )
 {
 	PyObject *enum_member;
@@ -129,6 +130,7 @@ enum_MetadataType ( void )
 	)
 
 	PyFLAC_ENUM_LOCK(MetadataType)
+	return 0;
 }
 
 
@@ -137,8 +139,8 @@ PyFLAC_FormatTypes_Ready ( void )
 {
 	int status;
 
-	PyFLAC_Type_Ready(ChannelAssignment)
-	PyFLAC_Type_Ready(MetadataType)
+	PyFLAC_Enum_Ready(ChannelAssignment)
+	PyFLAC_Enum_Ready(MetadataType)
 
 	enum_ChannelAssignment();
 	enum_MetadataType();
@@ -147,7 +149,8 @@ PyFLAC_FormatTypes_Ready ( void )
 }
 
 
-int PyFLAC_PyModule_AddFormatObjects (PyObject *module)
+int
+PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 {
 	int status;
 

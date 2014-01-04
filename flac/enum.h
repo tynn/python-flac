@@ -23,7 +23,8 @@
 
 #define PyFLAC_ENUM_MEMBER(var,type,value) \
 	var = PyType_GenericNew(&flac_##type##Type, NULL, NULL); \
-	PyObject_INIT_VAR(var, &flac_##type##Type, value);
+	if (var) \
+		PyObject_INIT_VAR(var, &flac_##type##Type, value);
 
 
 #define PyFLAC_ENUM_TYPE(type) \
@@ -43,6 +44,8 @@ static PyTypeObject flac_##type##Type = { \
 
 #define PyFLAC_ADD_ENUM_MEMBER(type,member,enum_var) \
 	PyFLAC_ENUM_MEMBER(enum_member,type,FLAC__##enum_var) \
+	if (!enum_member) \
+		return -1; \
 	PyDict_SetItem(flac_##type##Type.tp_dict, PyString_FromString(member), enum_member);
 
 

@@ -21,7 +21,11 @@
 #define __PyFLAC_h__
 
 
-#define PyFLAC_RETURN_bool(bool_value) if (bool_value) Py_RETURN_TRUE; else Py_RETURN_FALSE;
+#define PyFLAC_RETURN_bool(bool_value) if (bool_value) { Py_RETURN_TRUE; } else { Py_RETURN_FALSE; }
+
+#define PyFLAC_RETURN_bool_OR_RAISE(bool_value) \
+	if (bool_value) { if (PyErr_Occurred()) { return NULL; } else { Py_RETURN_TRUE; } } \
+	else { if (PyErr_Occurred()) { return NULL; } else { Py_RETURN_FALSE; } }
 
 #define PyFLAC_RETURN_int(int_value) return Py_BuildValue("i", int_value);
 
@@ -31,11 +35,17 @@
 
 #define PyFLAC_RETURN_unsigned(unsigned_value) return Py_BuildValue("I", unsigned_value);
 
-#define PyFLAC_CHECK_status if (status < 0) return status;
+#define PyFLAC_CHECK_status if (status < 0) { return status; }
 
 
 #define PyFLAC_Type_Ready(type) \
 	status = PyType_Ready(&flac_##type##Type); \
+	PyFLAC_CHECK_status
+
+
+#define PyFLAC_Enum_Ready(type) \
+	PyFLAC_Type_Ready(type) \
+	status = enum_##type(); \
 	PyFLAC_CHECK_status
 
 
