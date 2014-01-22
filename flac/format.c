@@ -25,9 +25,31 @@
 #include "enum.h"
 
 
+PyFLAC_Enum(SubframeType)
 PyFLAC_Enum(ChannelAssignment)
 PyFLAC_Enum(FrameNumberType)
 PyFLAC_Enum(MetadataType)
+
+
+static flac_Enum_Member enum_member_SubframeType[] = {
+	PyFLAC_Enum_Member(
+		"CONSTANT",
+		SUBFRAME_TYPE_CONSTANT
+	),
+	PyFLAC_Enum_Member(
+		"VERBATIM",
+		SUBFRAME_TYPE_VERBATIM
+	),
+	PyFLAC_Enum_Member(
+		"FIXED",
+		SUBFRAME_TYPE_FIXED
+	),
+	PyFLAC_Enum_Member(
+		"LPC",
+		SUBFRAME_TYPE_LPC
+	),
+	{ NULL }		/* Sentinel */
+};
 
 
 static flac_Enum_Member enum_member_ChannelAssignment[] = {
@@ -104,6 +126,10 @@ static flac_Enum_Member enum_member_MetadataType[] = {
 int
 PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 {
+	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(SubframeType), enum_member_SubframeType))
+	Py_INCREF(PyFLAC_type(SubframeType));
+	PyFLAC_CHECK_status(PyModule_AddObject(module, "SubframeType", (PyObject *) PyFLAC_type(SubframeType)))
+
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(ChannelAssignment), enum_member_ChannelAssignment))
 	Py_INCREF(PyFLAC_type(ChannelAssignment));
 	PyFLAC_CHECK_status(PyModule_AddObject(module, "ChannelAssignment", (PyObject *) PyFLAC_type(ChannelAssignment)))
