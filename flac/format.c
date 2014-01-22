@@ -26,6 +26,7 @@
 
 
 PyFLAC_Enum(ChannelAssignment)
+PyFLAC_Enum(FrameNumberType)
 PyFLAC_Enum(MetadataType)
 
 
@@ -45,6 +46,19 @@ static flac_Enum_Member enum_member_ChannelAssignment[] = {
 	PyFLAC_Enum_Member(
 		"MID_SIDE",
 		CHANNEL_ASSIGNMENT_MID_SIDE
+	),
+	{ NULL }		/* Sentinel */
+};
+
+
+static flac_Enum_Member enum_member_FrameNumberType[] = {
+	PyFLAC_Enum_Member(
+		"FRAME_NUMBER",
+		FRAME_NUMBER_TYPE_FRAME_NUMBER
+	),
+	PyFLAC_Enum_Member(
+		"SAMPLE_NUMBER",
+		FRAME_NUMBER_TYPE_SAMPLE_NUMBER
 	),
 	{ NULL }		/* Sentinel */
 };
@@ -91,11 +105,14 @@ int
 PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 {
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(ChannelAssignment), enum_member_ChannelAssignment))
-	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(MetadataType), enum_member_MetadataType))
-
 	Py_INCREF(PyFLAC_type(ChannelAssignment));
 	PyFLAC_CHECK_status(PyModule_AddObject(module, "ChannelAssignment", (PyObject *) PyFLAC_type(ChannelAssignment)))
+
+	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(FrameNumberType), enum_member_FrameNumberType))
+	Py_INCREF(PyFLAC_type(FrameNumberType));
+	PyFLAC_CHECK_status(PyModule_AddObject(module, "FrameNumberType", (PyObject *) PyFLAC_type(FrameNumberType)))
 	
+	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(MetadataType), enum_member_MetadataType))
 	Py_INCREF(PyFLAC_type(MetadataType));
 	PyFLAC_CHECK_status(PyModule_AddObject(module, "MetadataType", (PyObject *) PyFLAC_type(MetadataType)))
 
