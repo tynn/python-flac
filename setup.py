@@ -31,6 +31,7 @@ setup(
 	ext_modules = [Extension(
 		'flac',
 		sources = [
+			'flac/enum.c',
 			'flac/flac.c',
 			'flac/format.c',
 		],

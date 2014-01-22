@@ -20,48 +20,32 @@
 #ifndef __enum_h__
 #define __enum_h__
 
-
-#define PyFLAC_ENUM_MEMBER(var,type,value) \
-	var = PyType_GenericNew(&flac_##type##Type, NULL, NULL); \
-	if (var) \
-		PyObject_INIT_VAR(var, &flac_##type##Type, value);
-
-
-#define PyFLAC_ENUM_TYPE(type) \
-typedef struct flac_EnumObject flac_##type##Object; \
+#define PyFLAC_Enum(object) \
+typedef struct flac_EnumObject flac_##object##Object; \
 \
-static PyTypeObject flac_##type##Type = { \
+static PyTypeObject flac_##object##Type = { \
 	PyObject_HEAD_INIT(NULL) \
-	0, "flac." #type, \
-	sizeof(flac_##type##Object), \
-	0, (destructor) flac_Enum_dealloc, \
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
-	Py_TPFLAGS_DEFAULT , "FLAC enum " #type, \
-	0, 0, 0, 0, 0, 0, 0, 0, 0, \
-	&PyInt_Type, \
+	0, "flac." #object, \
+	sizeof(flac_##object##Object), \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	Py_TPFLAGS_DEFAULT , "FLAC enum " #object, \
 };
 
+#define PyFLAC_Enum_Member(member_name,flac_enum) { member_name, FLAC__##flac_enum, NULL }
 
-#define PyFLAC_ADD_ENUM_MEMBER(type,member,enum_var) \
-	PyFLAC_ENUM_MEMBER(enum_member,type,FLAC__##enum_var) \
-	if (!enum_member) \
-		return -1; \
-	PyDict_SetItem(flac_##type##Type.tp_dict, PyString_FromString(member), enum_member);
+struct flac_EnumObject {
+	PyObject_HEAD
+	int e_value;
+	char *e_name;
+};
 
+typedef struct {
+	char *e_name;
+	int e_value;
+	PyObject *e_object;
+} flac_Enum_Member;
 
-#define PyFLAC_ENUM_LOCK(type) flac_##type##Type.tp_new = 0;
-
-#define PyFLAC_E_VALUE(var) PyInt_AsLong(var)
-
-
-struct flac_EnumObject { PyIntObject e_value; };
-
-static void
-flac_Enum_dealloc(PyObject *self)
-{
-    self->ob_type->tp_free((PyObject *)self);
-}
-
+int PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *data);
 
 #endif // __enum_h__
 

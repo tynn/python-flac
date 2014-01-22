@@ -35,29 +35,9 @@
 
 #define PyFLAC_RETURN_unsigned(unsigned_value) return Py_BuildValue("I", unsigned_value);
 
-#define PyFLAC_CHECK_status if (status < 0) { return status; }
+#define PyFLAC_CHECK_status(status) if (status < 0) { return -1; }
 
-
-#define PyFLAC_Type_Ready(type) \
-	status = PyType_Ready(&flac_##type##Type); \
-	PyFLAC_CHECK_status
-
-
-#define PyFLAC_Enum_Ready(type) \
-	PyFLAC_Type_Ready(type) \
-	status = enum_##type(); \
-	PyFLAC_CHECK_status
-
-
-#define PyFLAC_Add_Object(object) \
-	Py_INCREF(&flac_##object##Type); \
-	status = PyModule_AddObject(module, #object, (PyObject *) &flac_##object##Type); \
-	PyFLAC_CHECK_status
-
-
-int PyFLAC_Format_MetadataType_Check (PyObject *object);
-
-PyObject * PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value);
+#define PyFLAC_type(object) &flac_##object##Type
 
 
 #endif // __PyFLAC_h__

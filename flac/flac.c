@@ -19,7 +19,7 @@
 
 #include <Python.h>
 
-#include "format.h"
+#include "flac.h"
 
 
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */

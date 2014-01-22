@@ -1,7 +1,7 @@
 /*
  *	This file is part of python-flac.
  *
- *	Copyright (c) 2013 Christian Schmitz <tynn.dev@gmail.com>
+ *	Copyright (c) 2014 Christian Schmitz <tynn.dev@gmail.com>
  *
  *	python-flac is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU Lesser General Public License as published by
@@ -17,13 +17,11 @@
  *	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __format_h__
-#define __format_h__
+#ifndef __flac_h__
+#define __flac_h__
 
-#include <FLAC/format.h>
+int PyFLAC_FormatTypes_Ready ( void );
+int PyFLAC_PyModule_AddFormatObjects (PyObject *module);
 
-int PyFLAC_Format_MetadataType_Check (PyObject *object);
-PyObject * PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value);
-
-#endif // __format_h__
+#endif // __flac_h__
 

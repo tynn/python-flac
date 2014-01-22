@@ -18,7 +18,6 @@
  */
 
 #include <Python.h>
-#include <FLAC/format.h>
 
 #include "PyFLAC.h"
 #include "format.h"
@@ -26,137 +25,99 @@
 #include "enum.h"
 
 
-PyFLAC_ENUM_TYPE(ChannelAssignment)
-PyFLAC_ENUM_TYPE(MetadataType)
+PyFLAC_Enum(ChannelAssignment)
+PyFLAC_Enum(MetadataType)
 
 
-int
-PyFLAC_Format_MetadataType_Check (PyObject *object)
-{
-	return PyObject_TypeCheck(object, &flac_MetadataTypeType);
-}
-
-
-PyObject *
-PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value)
-{
-	PyObject *py_value;
-
-	PyFLAC_ENUM_MEMBER(
-		py_value,
-		ChannelAssignment,
-		e_value
-	)
-
-	return py_value;
-}
-
-
-static int
-enum_ChannelAssignment ( void )
-{
-	PyObject *enum_member;
-
-	PyFLAC_ADD_ENUM_MEMBER(
-		ChannelAssignment,
+static flac_Enum_Member enum_member_ChannelAssignment[] = {
+	PyFLAC_Enum_Member(
 		"INDEPENDENT",
 		CHANNEL_ASSIGNMENT_INDEPENDENT
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		ChannelAssignment,
+	),
+	PyFLAC_Enum_Member(
 		"LEFT_SIDE",
 		CHANNEL_ASSIGNMENT_LEFT_SIDE
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		ChannelAssignment,
+	),
+	PyFLAC_Enum_Member(
 		"RIGHT_SIDE",
 		CHANNEL_ASSIGNMENT_RIGHT_SIDE
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		ChannelAssignment,
+	),
+	PyFLAC_Enum_Member(
 		"MID_SIDE",
 		CHANNEL_ASSIGNMENT_MID_SIDE
-	)
-
-	PyFLAC_ENUM_LOCK(ChannelAssignment)
-	return 0;
-}
+	),
+	{ NULL }		/* Sentinel */
+};
 
 
-static int
-enum_MetadataType ( void )
-{
-	PyObject *enum_member;
-
-	PyFLAC_ADD_ENUM_MEMBER(
-		MetadataType,
+static flac_Enum_Member enum_member_MetadataType[] = {
+	PyFLAC_Enum_Member(
 		"STREAMINFO",
 		METADATA_TYPE_STREAMINFO
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		MetadataType,
+	),
+	PyFLAC_Enum_Member(
 		"PADDING",
 		METADATA_TYPE_PADDING
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		MetadataType,
+	),
+	PyFLAC_Enum_Member(
 		"APPLICATION",
 		METADATA_TYPE_APPLICATION
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		MetadataType,
+	),
+	PyFLAC_Enum_Member(
 		"SEEKTABLE",
 		METADATA_TYPE_SEEKTABLE
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		MetadataType,
+	),
+	PyFLAC_Enum_Member(
 		"VORBIS_COMMENT",
 		METADATA_TYPE_VORBIS_COMMENT
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		MetadataType,
+	),
+	PyFLAC_Enum_Member(
 		"CUESHEET",
 		METADATA_TYPE_CUESHEET
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		MetadataType,
+	),
+	PyFLAC_Enum_Member(
 		"PICTURE",
 		METADATA_TYPE_PICTURE
-	)
-	PyFLAC_ADD_ENUM_MEMBER(
-		MetadataType,
+	),
+	PyFLAC_Enum_Member(
 		"UNDEFINED",
 		METADATA_TYPE_UNDEFINED
-	)
-
-	PyFLAC_ENUM_LOCK(MetadataType)
-	return 0;
-}
+	),
+	{ NULL }		/* Sentinel */
+};
 
 
 int
 PyFLAC_FormatTypes_Ready ( void )
 {
-	int status;
-
-	PyFLAC_Enum_Ready(ChannelAssignment)
-	PyFLAC_Enum_Ready(MetadataType)
-
-	enum_ChannelAssignment();
-	enum_MetadataType();
-
-	return status;
+	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(ChannelAssignment), enum_member_ChannelAssignment))
+	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(MetadataType), enum_member_MetadataType))
 }
 
 
 int
 PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 {
-	int status;
+	Py_INCREF(PyFLAC_type(ChannelAssignment));
+	PyFLAC_CHECK_status(PyModule_AddObject(module, "ChannelAssignment", (PyObject *) PyFLAC_type(ChannelAssignment)))
+	
+	Py_INCREF(PyFLAC_type(MetadataType));
+	PyFLAC_CHECK_status(PyModule_AddObject(module, "MetadataType", (PyObject *) PyFLAC_type(MetadataType)))
 
-	PyFLAC_Add_Object(ChannelAssignment)
-	PyFLAC_Add_Object(MetadataType)
+	return 0;
+}
 
-	return status;
+
+int
+PyFLAC_Format_MetadataType_Check (PyObject *object)
+{
+	return PyObject_TypeCheck(object, PyFLAC_type(MetadataType));
+}
+
+
+PyObject *
+PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value)
+{
+	return enum_member_MetadataType[e_value].e_object;
 }
 
