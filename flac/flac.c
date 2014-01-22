@@ -37,9 +37,6 @@ initflac ( void )
 {
 	PyObject *module;
 
-	if (PyFLAC_FormatTypes_Ready() < 0)
-		return;
-
 	module = Py_InitModule3("flac", flac_methods, "libFLAC");
 
 	PyFLAC_PyModule_AddFormatObjects(module);

@@ -20,7 +20,6 @@
 #ifndef __flac_h__
 #define __flac_h__
 
-int PyFLAC_FormatTypes_Ready ( void );
 int PyFLAC_PyModule_AddFormatObjects (PyObject *module);
 
 #endif // __flac_h__

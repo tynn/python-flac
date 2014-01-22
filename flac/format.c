@@ -88,16 +88,11 @@ static flac_Enum_Member enum_member_MetadataType[] = {
 
 
 int
-PyFLAC_FormatTypes_Ready ( void )
+PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 {
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(ChannelAssignment), enum_member_ChannelAssignment))
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(MetadataType), enum_member_MetadataType))
-}
 
-
-int
-PyFLAC_PyModule_AddFormatObjects (PyObject *module)
-{
 	Py_INCREF(PyFLAC_type(ChannelAssignment));
 	PyFLAC_CHECK_status(PyModule_AddObject(module, "ChannelAssignment", (PyObject *) PyFLAC_type(ChannelAssignment)))
 	
