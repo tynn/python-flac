@@ -272,6 +272,13 @@ PyFLAC_Format_MetadataType_Check (PyObject *object)
 PyObject *
 PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value)
 {
+	return enum_member_ChannelAssignment[e_value].e_object;
+}
+
+
+PyObject *
+PyFLAC_Format_MetadataType_FromEnum (FLAC__MetadataType e_value)
+{
 	return enum_member_MetadataType[e_value].e_object;
 }
 
