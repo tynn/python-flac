@@ -17,8 +17,6 @@
  *	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <Python.h>
-
 #include "PyFLAC.h"
 #include "format.h"
 

@@ -20,6 +20,8 @@
 #ifndef __PyFLAC_h__
 #define __PyFLAC_h__
 
+#include <Python.h>
+
 
 #define PyFLAC_RETURN_bool(bool_value) if (bool_value) { Py_RETURN_TRUE; } else { Py_RETURN_FALSE; }
 
