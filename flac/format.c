@@ -25,10 +25,24 @@
 #include "enum.h"
 
 
+PyFLAC_Enum(EntropyCodingMethodType)
 PyFLAC_Enum(SubframeType)
 PyFLAC_Enum(ChannelAssignment)
 PyFLAC_Enum(FrameNumberType)
 PyFLAC_Enum(MetadataType)
+
+
+static flac_Enum_Member enum_member_EntropyCodingMethodType[] = {
+	PyFLAC_Enum_Member(
+		"PARTITIONED_RICE",
+		ENTROPY_CODING_METHOD_PARTITIONED_RICE
+	),
+	PyFLAC_Enum_Member(
+		"PARTITIONED_RICE2",
+		ENTROPY_CODING_METHOD_PARTITIONED_RICE2
+	),
+	{ NULL }		/* Sentinel */
+};
 
 
 static flac_Enum_Member enum_member_SubframeType[] = {
@@ -126,6 +140,10 @@ static flac_Enum_Member enum_member_MetadataType[] = {
 int
 PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 {
+	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(EntropyCodingMethodType), enum_member_EntropyCodingMethodType))
+	Py_INCREF(PyFLAC_type(EntropyCodingMethodType));
+	PyFLAC_CHECK_status(PyModule_AddObject(module, "EntropyCodingMethodType", (PyObject *) PyFLAC_type(EntropyCodingMethodType)))
+
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(SubframeType), enum_member_SubframeType))
 	Py_INCREF(PyFLAC_type(SubframeType));
 	PyFLAC_CHECK_status(PyModule_AddObject(module, "SubframeType", (PyObject *) PyFLAC_type(SubframeType)))
