@@ -97,3 +97,10 @@ PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 	return 0;
 }
 
+
+int
+PyFLAC_Enum_AsInt (PyObject *object)
+{
+	return ((struct flac_EnumObject *) object)->e_value;
+}
+

@@ -47,5 +47,7 @@ typedef struct {
 
 int PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *data);
 
+int PyFLAC_Enum_AsInt (PyObject *object);
+
 #endif // __enum_h__
 
