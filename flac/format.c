@@ -30,6 +30,7 @@ PyFLAC_Enum(SubframeType)
 PyFLAC_Enum(ChannelAssignment)
 PyFLAC_Enum(FrameNumberType)
 PyFLAC_Enum(MetadataType)
+PyFLAC_Enum(StreamMetadataPictureType)
 
 
 static flac_Enum_Member enum_member_EntropyCodingMethodType[] = {
@@ -137,6 +138,99 @@ static flac_Enum_Member enum_member_MetadataType[] = {
 };
 
 
+static flac_Enum_Member enum_member_StreamMetadataPictureType[] = {
+	PyFLAC_Enum_Member(
+		"OTHER",
+		STREAM_METADATA_PICTURE_TYPE_OTHER
+	),
+	PyFLAC_Enum_Member(
+		"FILE_ICON_STANDARD",
+		STREAM_METADATA_PICTURE_TYPE_FILE_ICON_STANDARD
+	),
+	PyFLAC_Enum_Member(
+		"FILE_ICON",
+		STREAM_METADATA_PICTURE_TYPE_FILE_ICON
+	),
+	PyFLAC_Enum_Member(
+		"FRONT_COVER",
+		STREAM_METADATA_PICTURE_TYPE_FRONT_COVER
+	),
+	PyFLAC_Enum_Member(
+		"BACK_COVER",
+		STREAM_METADATA_PICTURE_TYPE_BACK_COVER
+	),
+	PyFLAC_Enum_Member(
+		"LEAFLET_PAGE",
+		STREAM_METADATA_PICTURE_TYPE_LEAFLET_PAGE
+	),
+	PyFLAC_Enum_Member(
+		"MEDIA",
+		STREAM_METADATA_PICTURE_TYPE_MEDIA
+	),
+	PyFLAC_Enum_Member(
+		"LEAD_ARTIST",
+		STREAM_METADATA_PICTURE_TYPE_LEAD_ARTIST
+	),
+	PyFLAC_Enum_Member(
+		"ARTIST",
+		STREAM_METADATA_PICTURE_TYPE_ARTIST
+	),
+	PyFLAC_Enum_Member(
+		"CONDUCTOR",
+		STREAM_METADATA_PICTURE_TYPE_CONDUCTOR
+	),
+	PyFLAC_Enum_Member(
+		"BAND",
+		STREAM_METADATA_PICTURE_TYPE_BAND
+	),
+	PyFLAC_Enum_Member(
+		"COMPOSER",
+		STREAM_METADATA_PICTURE_TYPE_COMPOSER
+	),
+	PyFLAC_Enum_Member(
+		"LYRICIST",
+		STREAM_METADATA_PICTURE_TYPE_LYRICIST
+	),
+	PyFLAC_Enum_Member(
+		"RECORDING_LOCATION",
+		STREAM_METADATA_PICTURE_TYPE_RECORDING_LOCATION
+	),
+	PyFLAC_Enum_Member(
+		"DURING_RECORDING",
+		STREAM_METADATA_PICTURE_TYPE_DURING_RECORDING
+	),
+	PyFLAC_Enum_Member(
+		"DURING_PERFORMANCE",
+		STREAM_METADATA_PICTURE_TYPE_DURING_PERFORMANCE
+	),
+	PyFLAC_Enum_Member(
+		"VIDEO_SCREEN_CAPTURE",
+		STREAM_METADATA_PICTURE_TYPE_VIDEO_SCREEN_CAPTURE
+	),
+	PyFLAC_Enum_Member(
+		"FISH",
+		STREAM_METADATA_PICTURE_TYPE_FISH
+	),
+	PyFLAC_Enum_Member(
+		"ILLUSTRATION",
+		STREAM_METADATA_PICTURE_TYPE_ILLUSTRATION
+	),
+	PyFLAC_Enum_Member(
+		"BAND_LOGOTYPE",
+		STREAM_METADATA_PICTURE_TYPE_BAND_LOGOTYPE
+	),
+	PyFLAC_Enum_Member(
+		"PUBLISHER_LOGOTYPE",
+		STREAM_METADATA_PICTURE_TYPE_PUBLISHER_LOGOTYPE
+	),
+	PyFLAC_Enum_Member(
+		"UNDEFINED",
+		STREAM_METADATA_PICTURE_TYPE_UNDEFINED
+	),
+	{ NULL }		/* Sentinel */
+};
+
+
 int
 PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 {
@@ -155,10 +249,14 @@ PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(FrameNumberType), enum_member_FrameNumberType))
 	Py_INCREF(PyFLAC_type(FrameNumberType));
 	PyFLAC_CHECK_status(PyModule_AddObject(module, "FrameNumberType", (PyObject *) PyFLAC_type(FrameNumberType)))
-	
+
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(MetadataType), enum_member_MetadataType))
 	Py_INCREF(PyFLAC_type(MetadataType));
 	PyFLAC_CHECK_status(PyModule_AddObject(module, "MetadataType", (PyObject *) PyFLAC_type(MetadataType)))
+
+	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(StreamMetadataPictureType), enum_member_StreamMetadataPictureType))
+	Py_INCREF(PyFLAC_type(StreamMetadataPictureType));
+	PyFLAC_CHECK_status(PyModule_AddObject(module, "StreamMetadataPictureType", (PyObject *) PyFLAC_type(StreamMetadataPictureType)))
 
 	return 0;
 }
