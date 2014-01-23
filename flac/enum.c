@@ -85,6 +85,7 @@ PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 
 	type->tp_dealloc = (destructor) flac_Enum_dealloc;
 	type->tp_repr = (reprfunc) flac_Enum_repr;
+	type->tp_dict = NULL;
 
 	PyFLAC_CHECK_status(PyType_Ready(type))
 
