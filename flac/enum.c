@@ -38,6 +38,16 @@ flac_Enum_repr (PyObject *self)
 }
 
 
+static PyObject *
+flac_Enum_str (PyObject *self)
+{
+	if (!self)
+		return NULL;
+
+	return PyString_FromString(((struct flac_EnumObject *) self)->e_name);
+}
+
+
 static int
 flac_Enum_add_member (PyTypeObject *type, flac_Enum_Member *member)
 {
@@ -83,6 +93,7 @@ PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 
 	type->tp_dealloc = (destructor) flac_Enum_dealloc;
 	type->tp_repr = (reprfunc) flac_Enum_repr;
+	type->tp_str = (reprfunc) flac_Enum_str;
 	type->tp_dict = NULL;
 
 	PyFLAC_CHECK_status(PyType_Ready(type))
