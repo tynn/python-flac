@@ -31,9 +31,6 @@ flac_Enum_dealloc (PyObject *self)
 static PyObject *
 flac_Enum_repr (PyObject *self)
 {
-	if (!self)
-		return NULL;
-
 	return PyString_FromFormat("<enum %s of type %s>", ((struct flac_EnumObject *) self)->e_name, self->ob_type->tp_name);
 }
 
@@ -41,9 +38,6 @@ flac_Enum_repr (PyObject *self)
 static PyObject *
 flac_Enum_str (PyObject *self)
 {
-	if (!self)
-		return NULL;
-
 	return PyString_FromString(((struct flac_EnumObject *) self)->e_name);
 }
 
