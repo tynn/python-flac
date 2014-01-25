@@ -33,6 +33,8 @@
 
 #define PyFLAC_RETURN_string(string_value) return Py_BuildValue("s", string_value);
 
+#define PyFLAC_RETURN_string_with_length(string_value,string_length) return Py_BuildValue("s#", string_value, string_length);
+
 #define PyFLAC_RETURN_uint64(uint64_value) return Py_BuildValue("K", uint64_value);
 
 #define PyFLAC_RETURN_unsigned(unsigned_value) return Py_BuildValue("I", unsigned_value);
