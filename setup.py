@@ -34,6 +34,7 @@ setup(
 			'flac/enum.c',
 			'flac/flac.c',
 			'flac/format.c',
+			'flac/metadata.c',
 		],
 		libraries = ['FLAC']
 	)]

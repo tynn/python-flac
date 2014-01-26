@@ -17,11 +17,14 @@
  *	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __flac_h__
-#define __flac_h__
+#ifndef __metadata_h__
+#define __metadata_h__
 
-int PyFLAC_PyModule_AddFormatObjects (PyObject *module);
-int PyFLAC_PyModule_AddMetadataObjects (PyObject *module);
+#include <FLAC/metadata.h>
 
-#endif // __flac_h__
+int PyFLAC_Format_MetadataType_Check (PyObject *object);
+
+PyObject * PyFLAC_Format_MetadataType_FromEnum (FLAC__MetadataType e_value);
+
+#endif // __metadata_h__
 

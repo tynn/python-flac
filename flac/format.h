@@ -22,10 +22,7 @@
 
 #include <FLAC/format.h>
 
-int PyFLAC_Format_MetadataType_Check (PyObject *object);
-
 PyObject * PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value);
-PyObject * PyFLAC_Format_MetadataType_FromEnum (FLAC__MetadataType e_value);
 
 #endif // __format_h__
 

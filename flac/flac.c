@@ -40,5 +40,6 @@ initflac ( void )
 	module = Py_InitModule3("flac", flac_methods, "libFLAC");
 
 	PyFLAC_PyModule_AddFormatObjects(module);
+	PyFLAC_PyModule_AddMetadataObjects(module);
 }
 
