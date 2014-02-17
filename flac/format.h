@@ -22,7 +22,5 @@
 
 #include <FLAC/format.h>
 
-PyObject * PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value);
-
 #endif // __format_h__
 

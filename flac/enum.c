@@ -101,6 +101,25 @@ PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 }
 
 
+PyObject *
+PyFLAC_Enum_FromInt (int e_value, flac_Enum_Member *data, const char *err_msg)
+{
+	int i;
+
+	for (i = 0; i < e_value; i++)
+		if(!data[i].e_name)
+		{
+			if(!err_msg)
+				err_msg = "invalid enum value";
+
+			PyErr_SetString(PyExc_ValueError, err_msg);
+			return NULL;
+		}
+
+	return data[e_value].e_object;
+}
+
+
 int
 PyFLAC_Enum_AsInt (PyObject *object)
 {

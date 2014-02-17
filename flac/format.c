@@ -120,15 +120,14 @@ PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 }
 
 
-PyObject *
-PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value)
-{
-	return enum_member_ChannelAssignment[e_value].e_object;
-}
-
-
 PyFLAC_type_Check_function(EntropyCodingMethodType)
 PyFLAC_type_Check_function(SubframeType)
 PyFLAC_type_Check_function(ChannelAssignment)
 PyFLAC_type_Check_function(FrameNumberType)
+
+
+PyFLAC_Enum_FromEnum_function(EntropyCodingMethodType, enum_member_EntropyCodingMethodType)
+PyFLAC_Enum_FromEnum_function(SubframeType, enum_member_SubframeType)
+PyFLAC_Enum_FromEnum_function(ChannelAssignment, enum_member_ChannelAssignment)
+PyFLAC_Enum_FromEnum_function(FrameNumberType, enum_member_FrameNumberType)
 

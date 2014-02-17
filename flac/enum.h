@@ -20,18 +20,28 @@
 #ifndef __enum_h__
 #define __enum_h__
 
-#define PyFLAC_Enum(object) \
-typedef struct flac_EnumObject flac_##object##Object; \
+#define PyFLAC_Enum(type) \
+typedef struct flac_EnumObject flac_##type##Object; \
 \
-static PyTypeObject flac_##object##Type = { \
+static PyTypeObject flac_##type##Type = { \
 	PyObject_HEAD_INIT(NULL) \
-	0, "flac." #object, \
-	sizeof(flac_##object##Object), \
+	0, "flac." #type, \
+	sizeof(flac_##type##Object), \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
-	Py_TPFLAGS_DEFAULT , "FLAC enum " #object, \
+	Py_TPFLAGS_DEFAULT , "FLAC enum " #type, \
 };
 
 #define PyFLAC_Enum_Member(member_name,flac_enum) { member_name, FLAC__##flac_enum, NULL }
+
+#define PyFLAC_Enum_FromEnum(e_value,type) PyFLAC_##type##_FromEnum (e_value)
+
+#define PyFLAC_Enum_FromEnum_use(type) PyObject * PyFLAC_Enum_FromEnum(int e_value,type)
+
+#define PyFLAC_Enum_FromEnum_function(type,data) \
+PyFLAC_Enum_FromEnum_use(type) \
+{ \
+	return PyFLAC_Enum_FromInt(e_value, data, "invalid value for enum " #type); \
+}
 
 struct flac_EnumObject {
 	PyObject_HEAD
@@ -46,6 +56,8 @@ typedef struct {
 } flac_Enum_Member;
 
 int PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *data);
+
+PyObject * PyFLAC_Enum_FromInt (int e_value, flac_Enum_Member *data, const char *err_msg);
 
 int PyFLAC_Enum_AsInt (PyObject *object);
 

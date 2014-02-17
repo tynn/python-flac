@@ -176,9 +176,6 @@ PyFLAC_type_Check_function(MetadataType)
 PyFLAC_type_Check_function(StreamMetadataPictureType)
 
 
-PyObject *
-PyFLAC_Format_MetadataType_FromEnum (FLAC__MetadataType e_value)
-{
-	return enum_member_MetadataType[e_value].e_object;
-}
+PyFLAC_Enum_FromEnum_function(MetadataType, enum_member_MetadataType)
+PyFLAC_Enum_FromEnum_function(StreamMetadataPictureType, enum_member_StreamMetadataPictureType)
 

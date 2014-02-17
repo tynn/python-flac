@@ -22,7 +22,5 @@
 
 #include <FLAC/metadata.h>
 
-PyObject * PyFLAC_Format_MetadataType_FromEnum (FLAC__MetadataType e_value);
-
 #endif // __metadata_h__
 
