@@ -43,6 +43,16 @@
 
 #define PyFLAC_type(object) &flac_##object##Type
 
+#define PyFLAC_type_Check(object,type) PyFLAC_##type##_Check(object)
+
+#define PyFLAC_type_Check_use(type) int PyFLAC_type_Check(PyObject *object,type)
+
+#define PyFLAC_type_Check_function(type) \
+PyFLAC_type_Check_use(type) \
+{ \
+	return PyObject_TypeCheck(object, PyFLAC_type(type)); \
+}
+
 
 #endif // __PyFLAC_h__
 

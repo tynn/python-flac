@@ -30,13 +30,21 @@ setup(
 	platforms = ['any'],
 	ext_modules = [Extension(
 		'flac',
+		language = 'c',
+		libraries = ['FLAC'],
 		sources = [
 			'flac/enum.c',
 			'flac/flac.c',
 			'flac/format.c',
 			'flac/metadata.c',
 		],
-		libraries = ['FLAC']
-	)]
+		depends = [
+			'flac/enum.h',
+			'flac/flac.h',
+			'flac/format.h',
+			'flac/metadata.h',
+			'flac/PyFLAC.h',
+		],
+	)],
 )
 

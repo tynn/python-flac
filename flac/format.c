@@ -126,3 +126,9 @@ PyFLAC_Format_ChannelAssignment_FromEnum (FLAC__ChannelAssignment e_value)
 	return enum_member_ChannelAssignment[e_value].e_object;
 }
 
+
+PyFLAC_type_Check_function(EntropyCodingMethodType)
+PyFLAC_type_Check_function(SubframeType)
+PyFLAC_type_Check_function(ChannelAssignment)
+PyFLAC_type_Check_function(FrameNumberType)
+

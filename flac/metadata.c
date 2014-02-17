@@ -172,11 +172,8 @@ PyFLAC_PyModule_AddMetadataObjects (PyObject *module)
 }
 
 
-int
-PyFLAC_Format_MetadataType_Check (PyObject *object)
-{
-	return PyObject_TypeCheck(object, PyFLAC_type(MetadataType));
-}
+PyFLAC_type_Check_function(MetadataType)
+PyFLAC_type_Check_function(StreamMetadataPictureType)
 
 
 PyObject *
