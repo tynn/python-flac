@@ -24,8 +24,8 @@
 typedef struct flac_EnumObject flac_##type##Object; \
 \
 static PyTypeObject flac_##type##Type = { \
-	PyObject_HEAD_INIT(NULL) \
-	0, "flac." #type, \
+	PyVarObject_HEAD_INIT(NULL,0) \
+	"flac." #type, \
 	sizeof(flac_##type##Object), \
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
 	Py_TPFLAGS_DEFAULT , "FLAC enum " #type, \

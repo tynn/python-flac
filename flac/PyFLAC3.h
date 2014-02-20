@@ -17,18 +17,11 @@
  *	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __flac_h__
-#define __flac_h__
+#ifndef __PyFLAC3_h__
+#define __PyFLAC3_h__
 
+#define PyString_FromFormat PyUnicode_FromFormat
+#define PyString_FromString PyUnicode_FromString
 
-#define PyFLAC_PyModule_AddObjects(module) \
-	PyFLAC_PyModule_AddFormatObjects(module); \
-	PyFLAC_PyModule_AddMetadataObjects(module);
-
-
-int PyFLAC_PyModule_AddFormatObjects (PyObject *module);
-int PyFLAC_PyModule_AddMetadataObjects (PyObject *module);
-
-
-#endif // __flac_h__
+#endif // __PyFLAC3_h__
 

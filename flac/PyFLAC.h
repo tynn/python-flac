@@ -22,6 +22,9 @@
 
 #include <Python.h>
 
+#if PY_MAJOR_VERSION >= 3
+#include "PyFLAC3.h"
+#endif
 
 #define PyFLAC_RETURN_bool(bool_value) if (bool_value) { Py_RETURN_TRUE; } else { Py_RETURN_FALSE; }
 

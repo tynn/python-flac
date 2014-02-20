@@ -22,24 +22,47 @@
 #include "flac.h"
 
 
-#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
-#define PyMODINIT_FUNC void
-#endif
+#define MODULE_NAME "flac"
+#define MODULE_DOC "libFLAC"
 
 
-static PyMethodDef flac_methods[] = {
+static PyMethodDef module_functions[] = {
 	{ NULL }		/* Sentinel */
 };
 
 
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef moduledef = {
+	PyModuleDef_HEAD_INIT,
+	MODULE_NAME,			/* m_name */
+	MODULE_DOC,				/* m_doc */
+	-1,						/* m_size */
+	module_functions,		/* m_methods */
+	NULL,					/* m_reload */
+	NULL,					/* m_traverse */
+	NULL,					/* m_clear */
+	NULL,					/* m_free */
+};
+#define PyFLAC_PyModule_Init PyInit_flac
+#define PyFLAC_PyModule_Create(module) module = PyModule_Create(&moduledef);
+#define PyFLAC_PyModule_RETURN(module) return module;
+#else
+#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
+#define PyMODINIT_FUNC void
+#endif
+#define PyFLAC_PyModule_Init initflac
+#define PyFLAC_PyModule_Create(module) module = Py_InitModule3(MODULE_NAME, module_functions, MODULE_DOC);
+#define PyFLAC_PyModule_RETURN(module)
+#endif
+
+
 PyMODINIT_FUNC
-initflac ( void )
+PyFLAC_PyModule_Init ( void )
 {
 	PyObject *module;
 
-	module = Py_InitModule3("flac", flac_methods, "libFLAC");
-
-	PyFLAC_PyModule_AddFormatObjects(module);
-	PyFLAC_PyModule_AddMetadataObjects(module);
+	PyFLAC_PyModule_Create(module)
+	PyFLAC_PyModule_AddObjects(module)
+	PyFLAC_PyModule_RETURN(module)
 }
 
