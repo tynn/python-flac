@@ -24,14 +24,14 @@
 static void
 flac_Enum_dealloc (PyObject *self)
 {
-    self->ob_type->tp_free((PyObject *)self);
+	Py_TYPE(self)->tp_free((PyObject*) self);
 }
 
 
 static PyObject *
 flac_Enum_repr (PyObject *self)
 {
-	return PyString_FromFormat("<enum %s of type %s>", ((struct flac_EnumObject *) self)->e_name, self->ob_type->tp_name);
+	return PyString_FromFormat("<enum %s of type %s>", ((struct flac_EnumObject *) self)->e_name, Py_TYPE(self)->tp_name);
 }
 
 
