@@ -23,19 +23,21 @@
 #include <Python.h>
 
 
-#if PY_MAJOR_VERSION >= 3
+ #if PY_MAJOR_VERSION >= 3
 #define __PyFLAC3__
 
 #define PyString_FromFormat PyUnicode_FromFormat
 #define PyString_FromString PyUnicode_FromString
 
-#define PyFLAC_RETURN_data(data,length) return Py_BuildValue("y#", data, length);
+#define PyFLAC_data_format "y"
 
-#else
+ #else
 
-#define PyFLAC_RETURN_data(data,length) return Py_BuildValue("s#", data, length);
+#define PyFLAC_data_format "s"
 
-#endif
+ #endif
+
+#define PyFLAC_RAISE_NotImplementedError { PyErr_SetString(PyExc_NotImplementedError, "someone should have implemented this"); return NULL; }
 
 #define PyFLAC_RETURN_bool(bool_value) if (bool_value) { Py_RETURN_TRUE; } else { Py_RETURN_FALSE; }
 
@@ -46,6 +48,10 @@
 #define PyFLAC_RETURN_int(int_value) return Py_BuildValue("i", int_value);
 
 #define PyFLAC_RETURN_string(string_value) return Py_BuildValue("s", string_value);
+
+#define PyFLAC_RETURN_string2(string_value,string_length) return Py_BuildValue("s#", string_value, string_length);
+
+#define PyFLAC_RETURN_data(data,length) return Py_BuildValue(PyFLAC_data_format "#", data, length);
 
 #define PyFLAC_RETURN_uint64(uint64_value) return Py_BuildValue("K", uint64_value);
 
