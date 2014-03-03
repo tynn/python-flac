@@ -55,6 +55,8 @@
 
 #define PyFLAC_RETURN_uint64(uint64_value) return Py_BuildValue("K", uint64_value);
 
+#define PyFLAC_RETURN_uint32(uint32_value) return Py_BuildValue("k", uint32_value);
+
 #define PyFLAC_RETURN_unsigned(unsigned_value) return Py_BuildValue("I", unsigned_value);
 
 #define PyFLAC_CHECK_status(status) if (status < 0) { return -1; }
