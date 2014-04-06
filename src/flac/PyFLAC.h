@@ -23,21 +23,28 @@
 #include <Python.h>
 
 
- #if PY_MAJOR_VERSION >= 3
-#define __PyFLAC3__
+#if PY_MAJOR_VERSION >= 3
+	#define __PyFLAC3__
 
-#define PyString_FromFormat PyUnicode_FromFormat
-#define PyString_FromString PyUnicode_FromString
+	#define PyStringObject PyUnicodeObject
+	#define PyString_Type PyUnicode_Type
+	#define PyString_GET_SIZE PyUnicode_GET_LENGTH
+	#define PyString_FromFormat PyUnicode_FromFormat
+	#define PyString_FromString PyUnicode_FromString
 
-#define PyFLAC_data_format "y"
+	#define PyFLAC_data_format "y"
 
- #else
+#else
 
-#define PyFLAC_data_format "s"
+	#define PyFLAC_data_format "s"
 
- #endif
+#endif
 
-#define PyFLAC_RAISE_NotImplementedError { PyErr_SetString(PyExc_NotImplementedError, "someone should have implemented this"); return NULL; }
+
+#define PyFLAC_RAISE_NotImplementedError { \
+	PyErr_SetString(PyExc_NotImplementedError, "someone should have implemented this"); \
+	return NULL; \
+}
 
 #define PyFLAC_RETURN_bool(bool_value) if (bool_value) { Py_RETURN_TRUE; } else { Py_RETURN_FALSE; }
 
