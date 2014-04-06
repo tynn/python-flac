@@ -33,13 +33,13 @@ setup(
 		language = 'c',
 		libraries = ['FLAC'],
 		sources = [
-			'src/flac/enum.c',
 			'src/flac/flac.c',
 			'src/flac/format.c',
 			'src/flac/metadata.c',
 		],
 		depends = [
 			'src/flac/enum.h',
+			'src/flac/_enum.h',
 			'src/flac/flac.h',
 			'src/flac/format.h',
 			'src/flac/metadata.h',

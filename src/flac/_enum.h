@@ -17,8 +17,36 @@
  *	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PyFLAC.h"
+#ifndef ___enum_h__
+#define ___enum_h__
+
+#define PyFLAC_Enum(type) \
+typedef struct flac_EnumObject flac_##type##Object; \
+\
+static PyTypeObject flac_##type##Type = { \
+	PyVarObject_HEAD_INIT(NULL,0) \
+	"flac." #type, \
+	sizeof(flac_##type##Object), \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	Py_TPFLAGS_DEFAULT , "FLAC enum " #type, \
+};
+
+#define PyFLAC_Enum_Member(member_name,flac_enum) { member_name, FLAC__##flac_enum, NULL }
+
+#define PyFLAC_Enum_FromEnum_function(type,data) \
+PyFLAC_Enum_FromEnum_use(type) \
+{ \
+	return PyFLAC_Enum_FromInt(e_value, data, "invalid value for enum " #type); \
+}
+
+
 #include "enum.h"
+
+typedef struct {
+	char *e_name;
+	int e_value;
+	PyObject *e_object;
+} flac_Enum_Member;
 
 
 static void
@@ -27,20 +55,17 @@ flac_Enum_dealloc (PyObject *self)
 	Py_TYPE(self)->tp_free((PyObject*) self);
 }
 
-
 static PyObject *
 flac_Enum_repr (PyObject *self)
 {
 	return PyString_FromFormat("<enum %s of type %s>", ((struct flac_EnumObject *) self)->e_name, Py_TYPE(self)->tp_name);
 }
 
-
 static PyObject *
 flac_Enum_str (PyObject *self)
 {
 	return PyString_FromString(((struct flac_EnumObject *) self)->e_name);
 }
-
 
 static int
 flac_Enum_add_member (PyTypeObject *type, flac_Enum_Member *member)
@@ -56,7 +81,6 @@ flac_Enum_add_member (PyTypeObject *type, flac_Enum_Member *member)
 
 	return 0;
 }
-
 
 static int
 flac_Enum_sort_member (flac_Enum_Member *member, int member_count)
@@ -79,8 +103,7 @@ flac_Enum_sort_member (flac_Enum_Member *member, int member_count)
 	return 0;
 }
 
-
-int
+static int
 PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 {
 	int i;
@@ -100,8 +123,7 @@ PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 	return 0;
 }
 
-
-PyObject *
+static PyObject *
 PyFLAC_Enum_FromInt (int e_value, flac_Enum_Member *data, const char *err_msg)
 {
 	int i;
@@ -119,10 +141,5 @@ PyFLAC_Enum_FromInt (int e_value, flac_Enum_Member *data, const char *err_msg)
 	return data[e_value].e_object;
 }
 
-
-int
-PyFLAC_Enum_AsInt (PyObject *object)
-{
-	return ((struct flac_EnumObject *) object)->e_value;
-}
+#endif // ___enum_h__
 

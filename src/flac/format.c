@@ -20,7 +20,7 @@
 #include "PyFLAC.h"
 #include "format.h"
 
-#include "enum.h"
+#include "_enum.h"
 
 
 PyFLAC_Enum(EntropyCodingMethodType)

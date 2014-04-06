@@ -20,7 +20,7 @@
 #include "PyFLAC.h"
 #include "metadata.h"
 
-#include "enum.h"
+#include "_enum.h"
 
 
 PyFLAC_Enum(MetadataType)
