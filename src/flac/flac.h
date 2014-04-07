@@ -22,12 +22,10 @@
 
 
 #define PyFLAC_PyModule_AddObjects(module) \
-	PyFLAC_PyModule_AddFormatObjects(module); \
-	PyFLAC_PyModule_AddMetadataObjects(module);
+	PyFLAC_PyModule_AddFormatObjects(module);
 
 
 int PyFLAC_PyModule_AddFormatObjects (PyObject *module);
-int PyFLAC_PyModule_AddMetadataObjects (PyObject *module);
 
 
 #endif // __flac_h__
