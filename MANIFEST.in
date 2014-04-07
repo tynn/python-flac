@@ -1,0 +1,3 @@
+include LICENSE* MANIFEST.in README.md
+recursive-include flac *.c *.h *.py
+recursive-include test *.py
