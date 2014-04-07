@@ -81,5 +81,54 @@ PyFLAC_type_Check_use(type) \
 }
 
 
+#if PY_MAJOR_VERSION >= 3
+
+	#define PyFLAC_PyModule_Prepare(name,functions,doc) \
+	static struct PyModuleDef moduledef = { \
+		PyModuleDef_HEAD_INIT, \
+		#name,					/* m_name */ \
+		doc,					/* m_doc */ \
+		-1,						/* m_size */ \
+		functions,				/* m_methods */ \
+		NULL,					/* m_reload */ \
+		NULL,					/* m_traverse */ \
+		NULL,					/* m_clear */ \
+		NULL,					/* m_free */ \
+	};
+	#define PyFLAC_PyModule_Init(name) PyInit_##name
+	#define PyFLAC_PyModule_Create(name,functions,doc) PyModule_Create(&moduledef)
+	#define PyFLAC_PyModule_RETURN return
+
+#else
+
+	#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
+		#define PyMODINIT_FUNC void
+	#endif
+
+	#define PyFLAC_PyModule_Prepare(name,functions,doc)
+	#define PyFLAC_PyModule_Init(name) init##name
+	#define PyFLAC_PyModule_Create(name,functions,doc) Py_InitModule3(#name, functions, doc)
+	#define PyFLAC_PyModule_RETURN (void)
+
+#endif
+
+
+#define PyFLAC_MODINIT(name,initfunction,functions,doc) \
+	PyFLAC_PyModule_Prepare(name,functions,doc) \
+	PyMODINIT_FUNC \
+	PyFLAC_PyModule_Init(name) ( void ) \
+	{ \
+		PyObject *module; \
+		module = PyFLAC_PyModule_Create(name,functions,doc); \
+		if (initfunction(module) < 0) { \
+			if (!PyErr_Occurred()) \
+				PyErr_SetString(PyExc_SystemError, "error return without exception set"); \
+			Py_DECREF(module); \
+			module = NULL; \
+		} \
+		PyFLAC_PyModule_RETURN module; \
+	}
+
+
 #endif // __PyFLAC_h__
 

@@ -18,31 +18,48 @@
 from distutils.core import Extension, setup
 
 
+def _sources (*files) :
+	return ['flac/' + file for file in files]
+
+headers = {
+	"format": [
+		'enum.h',
+		'_enum.h',
+	],
+}
+
+def _headers () :
+	yield 'PyFLAC.h'
+	for module in headers :
+		yield module + '.h'
+		for header in headers[module] :
+			yield header
+
+def _ext_modules () :
+	return [Extension(
+			'flac/' + module,
+			language = 'c',
+			libraries = ['FLAC'],
+			sources = _sources(module + '.c'),
+			depends = _sources(
+				'PyFLAC.h',
+				module + '.h',
+				*headers[module]
+			)
+		) for module in headers]
+
 setup(
 	name = "python-flac",
 	version = "0.0.1",
 	author = 'Christian Schmitz',
 	author_email = 'tynn.dev@gmail.com',
 	license = 'LGPLv3+',
-	description = '',
+	description = 'libFLAC',
 	long_description = '',
 	url = 'https://github.com/tynn/python-flac',
-	platforms = ['any'],
-	ext_modules = [Extension(
-		'flac',
-		language = 'c',
-		libraries = ['FLAC'],
-		sources = [
-			'src/flac/flac.c',
-			'src/flac/format.c',
-		],
-		depends = [
-			'src/flac/enum.h',
-			'src/flac/_enum.h',
-			'src/flac/flac.h',
-			'src/flac/format.h',
-			'src/flac/PyFLAC.h',
-		],
-	)],
+	platforms = ['Linux'],
+	headers = _sources(*set(_headers())),
+	packages = ["flac"],
+	ext_modules = _ext_modules(),
 )
 

@@ -229,8 +229,13 @@ static flac_Enum_Member enum_member_StreamMetadataPictureType[] = {
 };
 
 
-int
-PyFLAC_PyModule_AddFormatObjects (PyObject *module)
+static PyMethodDef flac_format_functions[] = {
+	{ NULL }		/* Sentinel */
+};
+
+
+static int
+flac_format_init (PyObject *module)
 {
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(EntropyCodingMethodType), enum_member_EntropyCodingMethodType))
 	Py_INCREF(PyFLAC_type(EntropyCodingMethodType));
@@ -258,6 +263,14 @@ PyFLAC_PyModule_AddFormatObjects (PyObject *module)
 
 	return 0;
 }
+
+
+PyFLAC_MODINIT(
+	format,
+	flac_format_init,
+	flac_format_functions,
+	"libFLAC format"
+)
 
 
 PyFLAC_type_Check_function(EntropyCodingMethodType)
