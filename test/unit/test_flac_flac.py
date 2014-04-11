@@ -15,20 +15,25 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Unit tests for the flac package """
+""" Unit tests for the flac.flac module """
 
 import unittest
+import flac.flac
 
-def _load_modules () :
-	from . import test_flac__export
-	from . import test_flac_flac
-	from . import test_flac_format
+class FlacExportTest (unittest.TestCase) :
 
-	for module in locals().values() :
-		yield module
+	def _test_attrs (self, module) :
+		attrs = filter(lambda name : not name.startswith('_'), dir(module))
+		for attr in attrs :
+			self.assertIs(getattr(flac.flac, attr), getattr(module, attr))
 
-def load_tests (loader, tests, pattern) :
-	for module in _load_modules() :
-		tests.addTests(loader.loadTestsFromModule(module))
-	return tests
+	def test__export (self) :
+		import flac._export
+		self._test_attrs(flac._export)
+
+	def test_format (self) :
+		import flac.format
+		self._test_attrs(flac.format)
+
+if __name__ == "__main__" : unittest.main()
 

@@ -15,20 +15,8 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Unit tests for the flac package """
+""" libFLAC """
 
-import unittest
-
-def _load_modules () :
-	from . import test_flac__export
-	from . import test_flac_flac
-	from . import test_flac_format
-
-	for module in locals().values() :
-		yield module
-
-def load_tests (loader, tests, pattern) :
-	for module in _load_modules() :
-		tests.addTests(loader.loadTestsFromModule(module))
-	return tests
+from ._export import *
+from .format import *
 
