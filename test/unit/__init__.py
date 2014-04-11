@@ -17,15 +17,12 @@
 
 """ Unit tests for the flac package """
 
-import unittest
+import inspect, unittest
 
 def load_tests(loader, tests, pattern):
-	from . import test_flac_format
-	modules = [
-		test_flac_format,
-	]
-	tests = unittest.TestSuite(tests)
-	for module in modules :
-		tests.addTests(loader.loadTestsFromModule(module))
+	from . import test_flac__export, test_flac_format
+	for module in locals().values() :
+		if inspect.ismodule(module) :
+			tests.addTests(loader.loadTestsFromModule(module))
 	return tests
 

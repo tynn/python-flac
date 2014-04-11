@@ -26,6 +26,8 @@
 #if PY_MAJOR_VERSION >= 3
 	#define __PyFLAC3__
 
+	#define PyInt_FromLong PyLong_FromLong
+
 	#define PyStringObject PyUnicodeObject
 	#define PyString_Type PyUnicode_Type
 	#define PyString_GET_SIZE PyUnicode_GET_LENGTH

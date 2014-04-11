@@ -15,7 +15,27 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
-""" libFLAC """
+""" Unit tests for the flac._export module """
 
-from ._export import *
+import unittest
+from flac._export import *
+
+class FlacExportTest (unittest.TestCase) :
+
+	def test_version_is_valid (self) :
+		self.assertGreater(API_VERSION_CURRENT, 0)
+		self.assertGreaterEqual(API_VERSION_REVISION, 0)
+		self.assertGreaterEqual(API_VERSION_AGE, 0)
+
+	def test_version_tuple_equals_single_parts (self) :
+		self.assertTupleEqual(
+			API_VERSION,
+			(API_VERSION_CURRENT, API_VERSION_REVISION, API_VERSION_AGE)
+		)
+
+	def test_ogg_support_is_bool (self) :
+		self.assertIsInstance(API_SUPPORTS_OGG_FLAC, bool)
+
+
+if __name__ == "__main__" : unittest.main()
 

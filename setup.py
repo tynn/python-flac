@@ -22,6 +22,7 @@ def _sources (*files) :
 	return ['flac/' + file for file in files]
 
 headers = {
+	"_export": [],
 	"format": [
 		'enum.h',
 		'_enum.h',
@@ -31,7 +32,8 @@ headers = {
 def _headers () :
 	yield 'PyFLAC.h'
 	for module in headers :
-		yield module + '.h'
+		if not module.startswith('_') :
+			yield module + '.h'
 		for header in headers[module] :
 			yield header
 
