@@ -15,7 +15,8 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
-from distutils.core import Extension, setup
+from disttest import Extension, setup
+import test.unit
 
 
 def _sources (*files) :
@@ -63,5 +64,6 @@ setup(
 	headers = _sources(*set(_headers())),
 	packages = ["flac"],
 	ext_modules = _ext_modules(),
+	test_suite = test.unit
 )
 
