@@ -27,14 +27,13 @@ headers = {
 	"format": [
 		'enum.h',
 		'_enum.h',
+		'format.h',
 	],
 }
 
 def _headers () :
 	yield 'PyFLAC.h'
 	for module in headers :
-		if not module.startswith('_') :
-			yield module + '.h'
 		for header in headers[module] :
 			yield header
 
@@ -44,11 +43,7 @@ def _ext_modules () :
 			language = 'c',
 			libraries = ['FLAC'],
 			sources = _sources(module + '.c'),
-			depends = _sources(
-				'PyFLAC.h',
-				module + '.h',
-				*headers[module]
-			)
+			depends = _sources( 'PyFLAC.h', *headers[module] )
 		) for module in headers]
 
 setup(
