@@ -18,6 +18,8 @@
  */
 
 #include "PyFLAC.h"
+
+#define __PyFLAC_format_MODULE__
 #include "format.h"
 
 #include "_enum.h"
@@ -234,6 +236,22 @@ static PyMethodDef flac_format_functions[] = {
 };
 
 
+PyFLAC_type_Check_function(EntropyCodingMethodType)
+PyFLAC_type_Check_function(SubframeType)
+PyFLAC_type_Check_function(ChannelAssignment)
+PyFLAC_type_Check_function(FrameNumberType)
+PyFLAC_type_Check_function(MetadataType)
+PyFLAC_type_Check_function(StreamMetadataPictureType)
+
+
+PyFLAC_Enum_FromEnum_function(EntropyCodingMethodType, enum_member_EntropyCodingMethodType)
+PyFLAC_Enum_FromEnum_function(SubframeType, enum_member_SubframeType)
+PyFLAC_Enum_FromEnum_function(ChannelAssignment, enum_member_ChannelAssignment)
+PyFLAC_Enum_FromEnum_function(FrameNumberType, enum_member_FrameNumberType)
+PyFLAC_Enum_FromEnum_function(MetadataType, enum_member_MetadataType)
+PyFLAC_Enum_FromEnum_function(StreamMetadataPictureType, enum_member_StreamMetadataPictureType)
+
+
 static int
 flac_format_init (PyObject *module)
 {
@@ -261,6 +279,8 @@ flac_format_init (PyObject *module)
 	Py_INCREF(PyFLAC_type(StreamMetadataPictureType));
 	PyFLAC_CHECK_status(PyModule_AddObject(module, "StreamMetadataPictureType", (PyObject *) PyFLAC_type(StreamMetadataPictureType)))
 
+	PyFLAC_CHECK_status(_c_api_init(module))
+
 	return 0;
 }
 
@@ -271,20 +291,4 @@ PyFLAC_MODINIT(
 	flac_format_functions,
 	"libFLAC format"
 )
-
-
-PyFLAC_type_Check_function(EntropyCodingMethodType)
-PyFLAC_type_Check_function(SubframeType)
-PyFLAC_type_Check_function(ChannelAssignment)
-PyFLAC_type_Check_function(FrameNumberType)
-PyFLAC_type_Check_function(MetadataType)
-PyFLAC_type_Check_function(StreamMetadataPictureType)
-
-
-PyFLAC_Enum_FromEnum_function(EntropyCodingMethodType, enum_member_EntropyCodingMethodType)
-PyFLAC_Enum_FromEnum_function(SubframeType, enum_member_SubframeType)
-PyFLAC_Enum_FromEnum_function(ChannelAssignment, enum_member_ChannelAssignment)
-PyFLAC_Enum_FromEnum_function(FrameNumberType, enum_member_FrameNumberType)
-PyFLAC_Enum_FromEnum_function(MetadataType, enum_member_MetadataType)
-PyFLAC_Enum_FromEnum_function(StreamMetadataPictureType, enum_member_StreamMetadataPictureType)
 

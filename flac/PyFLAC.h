@@ -72,12 +72,14 @@
 
 #define PyFLAC_type(object) &flac_##object##Type
 
-#define PyFLAC_type_Check(object,type) PyFLAC_##type##_Check(object)
+#define PyFLAC_type_Check_NAME(type) PyFLAC_##type##_Check
 
-#define PyFLAC_type_Check_use(type) int PyFLAC_type_Check(PyObject *object,type)
+#define PyFLAC_type_Check(object,type) PyFLAC_type_Check_NAME(type)(object)
+
+#define PyFLAC_type_Check_DEF(type) int PyFLAC_type_Check(PyObject *object,type)
 
 #define PyFLAC_type_Check_function(type) \
-PyFLAC_type_Check_use(type) \
+PyFLAC_type_Check_DEF(type) \
 { \
 	return PyObject_TypeCheck(object, PyFLAC_type(type)); \
 }
@@ -88,7 +90,7 @@ PyFLAC_type_Check_use(type) \
 	#define PyFLAC_PyModule_Prepare(name,functions,doc) \
 	static struct PyModuleDef moduledef = { \
 		PyModuleDef_HEAD_INIT, \
-		#name,					/* m_name */ \
+		"flac." #name,			/* m_name */ \
 		doc,					/* m_doc */ \
 		-1,						/* m_size */ \
 		functions,				/* m_methods */ \
@@ -109,7 +111,7 @@ PyFLAC_type_Check_use(type) \
 
 	#define PyFLAC_PyModule_Prepare(name,functions,doc)
 	#define PyFLAC_PyModule_Init(name) init##name
-	#define PyFLAC_PyModule_Create(name,functions,doc) Py_InitModule3(#name, functions, doc)
+	#define PyFLAC_PyModule_Create(name,functions,doc) Py_InitModule3("flac." #name, functions, doc)
 	#define PyFLAC_PyModule_RETURN (void)
 
 #endif

@@ -25,6 +25,7 @@ def _sources (*files) :
 headers = {
 	"_export": [],
 	"format": [
+		'_C_API.h',
 		'enum.h',
 		'_enum.h',
 		'format.h',

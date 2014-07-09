@@ -17,12 +17,14 @@
  *	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __enum_h__
-#define __enum_h__
+#ifndef __PyFLAC_enum_h__
+#define __PyFLAC_enum_h__
 
-#define PyFLAC_Enum_FromEnum(e_value,type) PyFLAC_##type##_FromEnum (e_value)
+#define PyFLAC_Enum_FromEnum_NAME(type) PyFLAC_##type##_FromEnum
 
-#define PyFLAC_Enum_FromEnum_use(type) PyObject * PyFLAC_Enum_FromEnum(int e_value,type)
+#define PyFLAC_Enum_FromEnum(e_value,type) PyFLAC_Enum_FromEnum_NAME(type) (e_value)
+
+#define PyFLAC_Enum_FromEnum_DEF(type) static PyObject * PyFLAC_Enum_FromEnum(int e_value,type)
 
 #define PyFLAC_Enum_AsInt(object) (((struct flac_EnumObject *) object)->e_value)
 
@@ -32,5 +34,5 @@ struct flac_EnumObject {
 	char *e_name;
 };
 
-#endif // __enum_h__
+#endif // __PyFLAC_enum_h__
 
