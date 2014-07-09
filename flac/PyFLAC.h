@@ -117,21 +117,25 @@ PyFLAC_type_Check_DEF(type) \
 #endif
 
 
-#define PyFLAC_MODINIT(name,initfunction,functions,doc) \
-	PyFLAC_PyModule_Prepare(name,functions,doc) \
-	PyMODINIT_FUNC \
-	PyFLAC_PyModule_Init(name) ( void ) \
+#define PyFLAC_MODINIT(name,initfunction,buildfunction,functions,doc) \
+PyFLAC_PyModule_Prepare(name,functions,doc) \
+PyMODINIT_FUNC \
+PyFLAC_PyModule_Init(name) ( void ) \
+{ \
+	PyObject *module; \
+	if (initfunction() < 0) { \
+		if (!PyErr_Occurred()) \
+			PyErr_SetString(PyExc_SystemError, "error return without exception set"); \
+		PyFLAC_PyModule_RETURN NULL; \
+	} \
+	else \
 	{ \
-		PyObject *module; \
 		module = PyFLAC_PyModule_Create(name,functions,doc); \
-		if (initfunction(module) < 0) { \
-			if (!PyErr_Occurred()) \
-				PyErr_SetString(PyExc_SystemError, "error return without exception set"); \
-			Py_DECREF(module); \
-			module = NULL; \
-		} \
+		if (module != NULL) \
+			buildfunction(module); \
 		PyFLAC_PyModule_RETURN module; \
-	}
+	} \
+}
 
 
 #endif // __PyFLAC_h__

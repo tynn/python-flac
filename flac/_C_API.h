@@ -21,19 +21,20 @@
 #define __PyFLAC__C_API_h__
 
 #define PyFLAC__C_API_INIT_begin(count) \
+static PyObject *_c_api; \
 static int \
-_c_api_init (PyObject *m) \
+_c_api_init (void) \
 { \
-	static void *_C_API[count]; \
-	PyObject *_c_api;
+	static void *_C_API[count];
 
 #define PyFLAC__C_API_PUT(i,name) _C_API[i] = (void *) name
 
 #define PyFLAC__C_API_INIT_end(module) \
 	_c_api = PyCapsule_New((void *) _C_API, "flac." #module "._C_API", NULL); \
-	if (_c_api == NULL) return -1; \
-	return PyModule_AddObject(m, "_C_API", _c_api); \
+	return _c_api == NULL ? -1 : 0; \
 }
+
+#define _c_api_build(module) PyModule_AddObject(module, "_C_API", _c_api)
 
 
 #define PyFLAC_API(module) PyFLAC_##module##_API

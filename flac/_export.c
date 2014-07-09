@@ -26,33 +26,53 @@ static PyMethodDef flac__export_functions[] = {
 };
 
 
+static PyObject *objects[5];
+
+
 static int
-flac__export_init (PyObject *module)
+flac__export_init (void)
 {
 	PyObject *object;
 
 	object = PyInt_FromLong(FLAC_API_VERSION_CURRENT);
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "API_VERSION_CURRENT", object))
+	if (object == NULL) return -1;
+	objects[0] = object;
 
 	object = PyInt_FromLong(FLAC_API_VERSION_REVISION);
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "API_VERSION_REVISION", object))
+	if (object == NULL) return -1;
+	objects[1] = object;
 
 	object = PyInt_FromLong(FLAC_API_VERSION_AGE);
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "API_VERSION_AGE", object))
+	if (object == NULL) return -1;
+	objects[2] = object;
 
 	object = Py_BuildValue("(iii)", FLAC_API_VERSION_CURRENT, FLAC_API_VERSION_REVISION, FLAC_API_VERSION_AGE);
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "API_VERSION", object))
+	if (object == NULL) return -1;
+	objects[3] = object;
 
 	object = PyBool_FromLong(FLAC_API_SUPPORTS_OGG_FLAC);
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "API_SUPPORTS_OGG_FLAC", object))
+	if (object == NULL) return -1;
+	objects[4] = object;
 
 	return 0;
+}
+
+
+static void
+flac__export_build (PyObject *module)
+{
+	PyModule_AddObject(module, "API_VERSION_CURRENT", objects[0]);
+	PyModule_AddObject(module, "API_VERSION_REVISION", objects[1]);
+	PyModule_AddObject(module, "API_VERSION_AGE", objects[2]);
+	PyModule_AddObject(module, "API_VERSION", objects[3]);
+	PyModule_AddObject(module, "API_SUPPORTS_OGG_FLAC", objects[4]);
 }
 
 
 PyFLAC_MODINIT(
 	_export,
 	flac__export_init,
+	flac__export_build,
 	flac__export_functions,
 	"libFLAC"
 )

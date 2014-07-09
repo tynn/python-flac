@@ -253,41 +253,48 @@ PyFLAC_Enum_FromEnum_function(StreamMetadataPictureType, enum_member_StreamMetad
 
 
 static int
-flac_format_init (PyObject *module)
+flac_format_init (void)
 {
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(EntropyCodingMethodType), enum_member_EntropyCodingMethodType))
-	Py_INCREF(PyFLAC_type(EntropyCodingMethodType));
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "EntropyCodingMethodType", (PyObject *) PyFLAC_type(EntropyCodingMethodType)))
-
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(SubframeType), enum_member_SubframeType))
-	Py_INCREF(PyFLAC_type(SubframeType));
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "SubframeType", (PyObject *) PyFLAC_type(SubframeType)))
-
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(ChannelAssignment), enum_member_ChannelAssignment))
-	Py_INCREF(PyFLAC_type(ChannelAssignment));
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "ChannelAssignment", (PyObject *) PyFLAC_type(ChannelAssignment)))
-
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(FrameNumberType), enum_member_FrameNumberType))
-	Py_INCREF(PyFLAC_type(FrameNumberType));
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "FrameNumberType", (PyObject *) PyFLAC_type(FrameNumberType)))
-
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(MetadataType), enum_member_MetadataType))
-	Py_INCREF(PyFLAC_type(MetadataType));
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "MetadataType", (PyObject *) PyFLAC_type(MetadataType)))
-
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(StreamMetadataPictureType), enum_member_StreamMetadataPictureType))
-	Py_INCREF(PyFLAC_type(StreamMetadataPictureType));
-	PyFLAC_CHECK_status(PyModule_AddObject(module, "StreamMetadataPictureType", (PyObject *) PyFLAC_type(StreamMetadataPictureType)))
-
-	PyFLAC_CHECK_status(_c_api_init(module))
-
+	PyFLAC_CHECK_status(_c_api_init())
 	return 0;
+}
+
+
+static void
+flac_format_build (PyObject *module)
+{
+	Py_INCREF(PyFLAC_type(EntropyCodingMethodType));
+	PyModule_AddObject(module, "EntropyCodingMethodType", (PyObject *) PyFLAC_type(EntropyCodingMethodType));
+
+	Py_INCREF(PyFLAC_type(SubframeType));
+	PyModule_AddObject(module, "SubframeType", (PyObject *) PyFLAC_type(SubframeType));
+
+	Py_INCREF(PyFLAC_type(ChannelAssignment));
+	PyModule_AddObject(module, "ChannelAssignment", (PyObject *) PyFLAC_type(ChannelAssignment));
+
+	Py_INCREF(PyFLAC_type(FrameNumberType));
+	PyModule_AddObject(module, "FrameNumberType", (PyObject *) PyFLAC_type(FrameNumberType));
+
+	Py_INCREF(PyFLAC_type(MetadataType));
+	PyModule_AddObject(module, "MetadataType", (PyObject *) PyFLAC_type(MetadataType));
+
+	Py_INCREF(PyFLAC_type(StreamMetadataPictureType));
+	PyModule_AddObject(module, "StreamMetadataPictureType", (PyObject *) PyFLAC_type(StreamMetadataPictureType));
+
+	_c_api_build(module);
 }
 
 
 PyFLAC_MODINIT(
 	format,
 	flac_format_init,
+	flac_format_build,
 	flac_format_functions,
 	"libFLAC format"
 )
