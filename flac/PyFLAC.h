@@ -70,7 +70,7 @@
 
 #define PyFLAC_CHECK_status(status) if (status < 0) { return -1; }
 
-#define PyFLAC_type(object) &flac_##object##Type
+#define PyFLAC_type(type) &PyFLAC_##type##Type
 
 #define PyFLAC_type_Check_NAME(type) PyFLAC_##type##_Check
 

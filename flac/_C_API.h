@@ -20,18 +20,16 @@
 #ifndef __PyFLAC__C_API_h__
 #define __PyFLAC__C_API_h__
 
-#define PyFLAC__C_API_INIT_begin(count) \
+#define PyFLAC__C_API_DEF(count) \
 static PyObject *_c_api; \
-static int \
-_c_api_init (void) \
-{ \
-	static void *_C_API[count];
+static void *_C_API[count];
 
-#define PyFLAC__C_API_PUT(i,name) _C_API[i] = (void *) name
+#define PyFLAC__C_API_PUT(i,name) \
+	_C_API[i] = ((void *) name);
 
-#define PyFLAC__C_API_INIT_end(module) \
+#define PyFLAC__C_API_INIT(module) { \
 	_c_api = PyCapsule_New((void *) _C_API, "flac." #module "._C_API", NULL); \
-	return _c_api == NULL ? -1 : 0; \
+	if (_c_api == NULL) return -1; \
 }
 
 #define _c_api_build(module) PyModule_AddObject(module, "_C_API", _c_api)
@@ -50,6 +48,13 @@ PyFLAC_import_##module (void) \
 	if (PyFLAC_API(module) == NULL) return -1; \
 	return 0; \
 }
+
+
+#define PyFLAC_type_PUT(type,i) \
+	PyFLAC__C_API_PUT(i,PyFLAC_type(type))
+
+#define PyFLAC_type_API(module,i) \
+	(*(PyTypeObject *) PyFLAC_API(module)[i])
 
 
 #define PyFLAC_type_Check_PUT(type,i) \
