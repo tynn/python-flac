@@ -25,15 +25,20 @@ def _sources (*files) :
 headers = {
 	"_export": [],
 	"format": [
-		'_C_API.h',
 		'enum.h',
 		'_enum.h',
 		'format.h',
+	],
+	"metadata0": [
+		'enum.h',
+		'format.h',
+		'metadata.h',
 	],
 }
 
 def _headers () :
 	yield 'PyFLAC.h'
+	yield '_C_API.h'
 	for module in headers :
 		for header in headers[module] :
 			yield header
@@ -44,7 +49,7 @@ def _ext_modules () :
 			language = 'c',
 			libraries = ['FLAC'],
 			sources = _sources(module + '.c'),
-			depends = _sources( 'PyFLAC.h', *headers[module] )
+			depends = _sources('PyFLAC.h', '_C_API.h', *headers[module])
 		) for module in headers]
 
 setup(
