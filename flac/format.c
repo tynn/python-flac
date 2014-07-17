@@ -272,22 +272,22 @@ static void
 flac_format_build (PyObject *module)
 {
 	Py_INCREF(PyFLAC_type(EntropyCodingMethodType));
-	PyModule_AddObject(module, "EntropyCodingMethodType", (PyObject *) PyFLAC_type(EntropyCodingMethodType));
+	PyFLAC_PyModule_AddType(module, EntropyCodingMethodType);
 
 	Py_INCREF(PyFLAC_type(SubframeType));
-	PyModule_AddObject(module, "SubframeType", (PyObject *) PyFLAC_type(SubframeType));
+	PyFLAC_PyModule_AddType(module, SubframeType);
 
 	Py_INCREF(PyFLAC_type(ChannelAssignment));
-	PyModule_AddObject(module, "ChannelAssignment", (PyObject *) PyFLAC_type(ChannelAssignment));
+	PyFLAC_PyModule_AddType(module, ChannelAssignment);
 
 	Py_INCREF(PyFLAC_type(FrameNumberType));
-	PyModule_AddObject(module, "FrameNumberType", (PyObject *) PyFLAC_type(FrameNumberType));
+	PyFLAC_PyModule_AddType(module, FrameNumberType);
 
 	Py_INCREF(PyFLAC_type(MetadataType));
-	PyModule_AddObject(module, "MetadataType", (PyObject *) PyFLAC_type(MetadataType));
+	PyFLAC_PyModule_AddType(module, MetadataType);
 
 	Py_INCREF(PyFLAC_type(StreamMetadataPictureType));
-	PyModule_AddObject(module, "StreamMetadataPictureType", (PyObject *) PyFLAC_type(StreamMetadataPictureType));
+	PyFLAC_PyModule_AddType(module, StreamMetadataPictureType);
 
 	_c_api_build(module);
 }

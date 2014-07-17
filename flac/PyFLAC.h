@@ -138,5 +138,9 @@ PyFLAC_PyModule_Init(name) ( void ) \
 }
 
 
+#define PyFLAC_PyModule_AddType(module,type) \
+	PyModule_AddObject(module, #type, (PyObject *) PyFLAC_type(type))
+
+
 #endif // __PyFLAC_h__
 
