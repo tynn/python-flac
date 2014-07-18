@@ -17,7 +17,7 @@
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
 from flac.format import StreamMetadataPictureType as picture_type
-from flac.metadata0 import get_streaminfo, get_tags, get_cuesheet, get_picture
+import flac.metadata0 as flac
 import mimetypes, os, signal, sys
 
 def _printf (format, *args) :
@@ -34,7 +34,7 @@ def _printt (*tuples) :
 			_printt2(tuple, fill)
 
 def get_streaminfo (filename) :
-	metadata = get_streaminfo(filename)
+	metadata = flac.get_streaminfo(filename)
 	if metadata :
 		metadata = metadata.data
 		_printt(
@@ -50,12 +50,12 @@ def get_streaminfo (filename) :
 		)
 
 def get_tags (filename) :
-	metadata = get_tags(filename)
+	metadata = flac.get_tags(filename)
 	if metadata :
 		_printt(*map(lambda c : c.to_name_value_pair(), metadata.data.comments))
 
 def get_cuesheet (filename) :
-	metadata = get_cuesheet(filename)
+	metadata = flac.get_cuesheet(filename)
 	if metadata :
 		_printf('FILE "{0:s}" WAVE', os.path.basename(filename))
 		metadata = metadata.data
@@ -70,7 +70,7 @@ def get_cuesheet (filename) :
 					_printf('    INDEX {0:02d} {1:02d}:{2:02d}:{3:02d}', index.number, m, s, f)
 
 def _get_picture (filename, picture_type) :
-	metadata = get_picture(filename, picture_type)
+	metadata = flac.get_picture(filename, picture_type)
 	if metadata :
 		metadata = metadata.data
 		filename = os.path.splitext(filename)[0] + '.' + str(metadata.type)
