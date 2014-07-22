@@ -72,17 +72,7 @@
 
 #define PyFLAC_type(type) &PyFLAC_##type##Type
 
-#define PyFLAC_type_Check_NAME(type) PyFLAC_##type##_Check
-
-#define PyFLAC_type_Check(object,type) PyFLAC_type_Check_NAME(type)(object)
-
-#define PyFLAC_type_Check_DEF(type) int PyFLAC_type_Check(PyObject *object,type)
-
-#define PyFLAC_type_Check_function(type) \
-PyFLAC_type_Check_DEF(type) \
-{ \
-	return PyObject_TypeCheck(object, PyFLAC_type(type)); \
-}
+#define PyFLAC_type_Check(object,type) PyObject_TypeCheck(object, PyFLAC_type(type))
 
 
 #if PY_MAJOR_VERSION >= 3

@@ -52,7 +52,7 @@ typedef struct {
 static void
 flac_Enum_dealloc (PyObject *self)
 {
-	Py_TYPE(self)->tp_free((PyObject*) self);
+	Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *

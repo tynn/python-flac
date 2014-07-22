@@ -42,11 +42,10 @@ static void **PyFLAC_API(module); \
 static int \
 PyFLAC_import_##module (void) \
 { \
-	if (PyFLAC_API(module) != NULL) return 0; \
+	if (PyFLAC_API(module) != NULL) return 1; \
 	if (PyImport_ImportModule("flac." #module) == NULL) return -1; \
 	PyFLAC_API(module) = (void **) PyCapsule_Import("flac." #module "._C_API", 0); \
-	if (PyFLAC_API(module) == NULL) return -1; \
-	return 0; \
+	return PyFLAC_API(module) == NULL ? -1 : 0; \
 }
 
 
@@ -57,20 +56,13 @@ PyFLAC_import_##module (void) \
 	(*(PyTypeObject *) PyFLAC_API(module)[i])
 
 
-#define PyFLAC_type_Check_PUT(type,i) \
-	PyFLAC__C_API_PUT(i,PyFLAC_type_Check_NAME(type))
-
-#define PyFLAC_type_Check_API(module,i) \
-	(*(int (*)(PyObject *object)) PyFLAC_API(module)[i])
-
-
 #ifdef __PyFLAC_enum_h__
 
 #define PyFLAC_Enum_FromEnum_PUT(type,i) \
 	PyFLAC__C_API_PUT(i,PyFLAC_Enum_FromEnum_NAME(type))
 
 #define PyFLAC_Enum_FromEnum_API(module,i) \
-	(*(PyObject * (*)(int e_value)) PyFLAC_API(module)[i])
+	(*(PyObject * (*)(int)) PyFLAC_API(module)[i])
 
 #endif // __PyFLAC_enum_h__
 

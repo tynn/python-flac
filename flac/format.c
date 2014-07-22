@@ -236,14 +236,6 @@ static PyMethodDef flac_format_functions[] = {
 };
 
 
-PyFLAC_type_Check_function(EntropyCodingMethodType)
-PyFLAC_type_Check_function(SubframeType)
-PyFLAC_type_Check_function(ChannelAssignment)
-PyFLAC_type_Check_function(FrameNumberType)
-PyFLAC_type_Check_function(MetadataType)
-PyFLAC_type_Check_function(StreamMetadataPictureType)
-
-
 PyFLAC_Enum_FromEnum_function(EntropyCodingMethodType, enum_member_EntropyCodingMethodType)
 PyFLAC_Enum_FromEnum_function(SubframeType, enum_member_SubframeType)
 PyFLAC_Enum_FromEnum_function(ChannelAssignment, enum_member_ChannelAssignment)

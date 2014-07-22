@@ -29,88 +29,70 @@ extern "C" {
 #include "_C_API.h"
 
 #define			_StreamMetadata_type_								 0
+#define			_StreamMetadataStreamInfoData_type_					 1
+#define			_StreamMetadataApplicationData_type_				 2
+#define			_StreamMetadataSeekPoint_type_						 3
+#define			_StreamMetadataSeekTableData_type_					 4
+#define			_StreamMetadataVorbisCommentEntry_type_				 5
+#define			_StreamMetadataVorbisCommentData_type_				 6
+#define			_StreamMetadataCueSheetIndex_type_					 7
+#define			_StreamMetadataCueSheetTrack_type_					 8
+#define			_StreamMetadataCueSheetData_type_					 9
+#define			_StreamMetadataPictureData_type_					10
 
-#define			_StreamMetadata_Check_								 1
-#define			_StreamMetadataStreamInfoData_Check_				 2
-#define			_StreamMetadataApplicationData_Check_				 3
-#define			_StreamMetadataSeekPoint_Check_						 4
-#define			_StreamMetadataSeekTableData_Check_					 5
-#define			_StreamMetadataVorbisCommentEntry_Check_			 6
-#define			_StreamMetadataVorbisCommentData_Check_				 7
-#define			_StreamMetadataCueSheetIndex_Check_					 8
-#define			_StreamMetadataCueSheetTrack_Check_					 9
-#define			_StreamMetadataCueSheetData_Check_					10
-#define			_StreamMetadataPictureData_Check_					11
-
-#define			_StreamMetadata_FromClass_							12
+#define			_StreamMetadata_FromClass_							11
 
 
 #ifdef __PyFLAC_metadata_MODULE__
 
-PyFLAC__C_API_DEF(13)
+PyFLAC__C_API_DEF(12)
 #define _c_api_init { \
 	PyFLAC_type_PUT(StreamMetadata,_StreamMetadata_type_) \
-	PyFLAC_type_Check_PUT(StreamMetadata,_StreamMetadata_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataStreamInfoData,_StreamMetadataStreamInfoData_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataApplicationData,_StreamMetadataApplicationData_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataSeekPoint,_StreamMetadataSeekPoint_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataSeekTableData,_StreamMetadataSeekTableData_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataVorbisCommentEntry,_StreamMetadataVorbisCommentEntry_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataVorbisCommentData,_StreamMetadataVorbisCommentData_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataCueSheetIndex,_StreamMetadataCueSheetIndex_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataCueSheetTrack,_StreamMetadataCueSheetTrack_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataCueSheetData,_StreamMetadataCueSheetData_Check_) \
-	PyFLAC_type_Check_PUT(StreamMetadataPictureData,_StreamMetadataPictureData_Check_) \
+	PyFLAC_type_PUT(StreamMetadataStreamInfoData,_StreamMetadataStreamInfoData_type_) \
+	PyFLAC_type_PUT(StreamMetadataApplicationData,_StreamMetadataApplicationData_type_) \
+	PyFLAC_type_PUT(StreamMetadataSeekPoint,_StreamMetadataSeekPoint_type_) \
+	PyFLAC_type_PUT(StreamMetadataSeekTableData,_StreamMetadataSeekTableData_type_) \
+	PyFLAC_type_PUT(StreamMetadataVorbisCommentEntry,_StreamMetadataVorbisCommentEntry_type_) \
+	PyFLAC_type_PUT(StreamMetadataVorbisCommentData,_StreamMetadataVorbisCommentData_type_) \
+	PyFLAC_type_PUT(StreamMetadataCueSheetIndex,_StreamMetadataCueSheetIndex_type_) \
+	PyFLAC_type_PUT(StreamMetadataCueSheetTrack,_StreamMetadataCueSheetTrack_type_) \
+	PyFLAC_type_PUT(StreamMetadataCueSheetData,_StreamMetadataCueSheetData_type_) \
+	PyFLAC_type_PUT(StreamMetadataPictureData,_StreamMetadataPictureData_type_) \
 	PyFLAC__C_API_PUT(_StreamMetadata_FromClass_,PyFLAC_StreamMetadata_FromClass) \
 	PyFLAC__C_API_INIT(metadata) \
 }
 
-PyFLAC_type_Check_DEF(StreamMetadata);
-PyFLAC_type_Check_DEF(StreamMetadataStreamInfoData);
-PyFLAC_type_Check_DEF(StreamMetadataApplicationData);
-PyFLAC_type_Check_DEF(StreamMetadataSeekPoint);
-PyFLAC_type_Check_DEF(StreamMetadataSeekTableData);
-PyFLAC_type_Check_DEF(StreamMetadataVorbisCommentEntry);
-PyFLAC_type_Check_DEF(StreamMetadataVorbisCommentData);
-PyFLAC_type_Check_DEF(StreamMetadataCueSheetIndex);
-PyFLAC_type_Check_DEF(StreamMetadataCueSheetTrack);
-PyFLAC_type_Check_DEF(StreamMetadataCueSheetData);
-PyFLAC_type_Check_DEF(StreamMetadataPictureData);
-
 static PyObject * PyFLAC_StreamMetadata_FromClass (const FLAC__StreamMetadata *metadata);
 
-#else
+#else // __PyFLAC_metadata_MODULE__
 
 PyFLAC__C_API(metadata)
 
 #define PyFLAC_StreamMetadataType \
 	PyFLAC_type_API(metadata,_StreamMetadata_type_)
-
-#define PyFLAC_StreamMetadata_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadata_Check_)
-#define PyFLAC_StreamMetadataStreamInfoData_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataStreamInfoData_Check_)
-#define PyFLAC_StreamMetadataApplicationData_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataApplicationData_Check_)
-#define PyFLAC_StreamMetadataSeekPoint_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataSeekPoint_Check_)
-#define PyFLAC_StreamMetadataSeekTableData_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataSeekTableData_Check_)
-#define PyFLAC_StreamMetadataVorbisCommentEntry_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataVorbisCommentEntry_Check_)
-#define PyFLAC_StreamMetadataVorbisCommentData_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataVorbisCommentData_Check_)
-#define PyFLAC_StreamMetadataCueSheetIndex_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataCueSheetIndex_Check_)
-#define PyFLAC_StreamMetadataCueSheetTrack_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataCueSheetTrack_Check_)
-#define PyFLAC_StreamMetadataCueSheetData_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataCueSheetData_Check_)
-#define PyFLAC_StreamMetadataPictureData_Check \
-	PyFLAC_type_Check_API(metadata,_StreamMetadataPictureData_Check_)
+#define PyFLAC_StreamMetadataStreamInfoDataType \
+	PyFLAC_type_API(metadata,_StreamMetadataStreamInfoData_type_)
+#define PyFLAC_StreamMetadataApplicationDataType \
+	PyFLAC_type_API(metadata,_StreamMetadataApplicationData_type_)
+#define PyFLAC_StreamMetadataSeekPointType \
+	PyFLAC_type_API(metadata,_StreamMetadataSeekPoint_type_)
+#define PyFLAC_StreamMetadataSeekTableDataType \
+	PyFLAC_type_API(metadata,_StreamMetadataSeekTableData_type_)
+#define PyFLAC_StreamMetadataVorbisCommentEntryType \
+	PyFLAC_type_API(metadata,_StreamMetadataVorbisCommentEntry_type_)
+#define PyFLAC_StreamMetadataVorbisCommentDataType \
+	PyFLAC_type_API(metadata,_StreamMetadataVorbisCommentData_type_)
+#define PyFLAC_StreamMetadataCueSheetIndexType \
+	PyFLAC_type_API(metadata,_StreamMetadataCueSheetIndex_type_)
+#define PyFLAC_StreamMetadataCueSheetTrackType \
+	PyFLAC_type_API(metadata,_StreamMetadataCueSheetTrack_type_)
+#define PyFLAC_StreamMetadataCueSheetDataType \
+	PyFLAC_type_API(metadata,_StreamMetadataCueSheetData_type_)
+#define PyFLAC_StreamMetadataPictureDataType \
+	PyFLAC_type_API(metadata,_StreamMetadataPictureData_type_)
 
 #define PyFLAC_StreamMetadata_FromClass \
-	(*(PyObject * (*)(const FLAC__StreamMetadata *metadata)) PyFLAC_API(metadata)[_StreamMetadata_FromClass_])
+	(*(PyObject * (*)(const FLAC__StreamMetadata *)) PyFLAC_API(metadata)[_StreamMetadata_FromClass_])
 
 #endif // __PyFLAC_metadata_MODULE__
 
