@@ -51,6 +51,7 @@ PyFLAC__C_API_DEF(2)
 	PyFLAC_type_PUT(StreamMetadata,_StreamMetadata_type_) \
 	PyFLAC__C_API_PUT(_StreamMetadata_FromClass_,PyFLAC_StreamMetadata_FromClass) \
 	PyFLAC__C_API_INIT(metadata) \
+	PyFLAC__C_API_CHECK \
 }
 
 static PyObject * PyFLAC_StreamMetadata_FromClass (const FLAC__StreamMetadata *metadata);

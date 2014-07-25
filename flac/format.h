@@ -62,6 +62,7 @@ PyFLAC__C_API_DEF(12)
 	PyFLAC_Enum_FromEnum_PUT(MetadataType,_MetadataType_FromEnum_) \
 	PyFLAC_Enum_FromEnum_PUT(StreamMetadataPictureType,_StreamMetadataPictureType_FromEnum_) \
 	PyFLAC__C_API_INIT(format) \
+	PyFLAC__C_API_CHECK \
 }
 
 PyFLAC_Enum_FromEnum_DEF(EntropyCodingMethodType);
