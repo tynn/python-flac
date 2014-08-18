@@ -44,10 +44,12 @@ extern "C" {
 #define			_MetadataType_FromEnum_								10
 #define			_StreamMetadataPictureType_FromEnum_				11
 
+#define			_FlacFormatError_type_								12
+
 
 #ifdef __PyFLAC_format_MODULE__
 
-PyFLAC__C_API_DEF(12)
+PyFLAC__C_API_DEF(13)
 #define _c_api_init { \
 	PyFLAC_type_PUT(EntropyCodingMethodType,_EntropyCodingMethodType_type_) \
 	PyFLAC_type_PUT(SubframeType,_SubframeType_type_) \
@@ -61,6 +63,7 @@ PyFLAC__C_API_DEF(12)
 	PyFLAC_Enum_FromEnum_PUT(FrameNumberType,_FrameNumberType_FromEnum_) \
 	PyFLAC_Enum_FromEnum_PUT(MetadataType,_MetadataType_FromEnum_) \
 	PyFLAC_Enum_FromEnum_PUT(StreamMetadataPictureType,_StreamMetadataPictureType_FromEnum_) \
+	PyFLAC_type_PUT(FlacFormatError,_FlacFormatError_type_) \
 	PyFLAC__C_API_INIT(format) \
 	PyFLAC__C_API_CHECK \
 }
@@ -71,6 +74,9 @@ PyFLAC_Enum_FromEnum_DEF(ChannelAssignment);
 PyFLAC_Enum_FromEnum_DEF(FrameNumberType);
 PyFLAC_Enum_FromEnum_DEF(MetadataType);
 PyFLAC_Enum_FromEnum_DEF(StreamMetadataPictureType);
+
+static PyObject *flac_FlacFormatErrorType;
+#define PyFLAC_FlacFormatErrorType (*flac_FlacFormatErrorType)
 
 #else // __PyFLAC_format_MODULE__
 
@@ -101,6 +107,9 @@ PyFLAC__C_API(format)
 	PyFLAC_Enum_FromEnum_API(format,_MetadataType_FromEnum_)
 #define PyFLAC_StreamMetadataPictureType_FromEnum \
 	PyFLAC_Enum_FromEnum_API(format,_StreamMetadataPictureType_FromEnum_)
+
+#define PyFLAC_FlacFormatErrorType \
+	(*(PyObject *) PyFLAC_API(format)[_FlacFormatError_type_])
 
 #endif // __PyFLAC_format_MODULE__
 

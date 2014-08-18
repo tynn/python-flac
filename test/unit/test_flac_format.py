@@ -22,6 +22,15 @@ except : import _enum
 import unittest
 from flac.format import *
 
+class FormatErrorTest (unittest.TestCase) :
+
+	def _raise_format_error (self) :
+		raise FlacFormatError
+
+	def test_ininstanceability (self) :
+		self.assertRaises(FlacFormatError, self._raise_format_error)
+
+
 def load_tests(loader, tests, pattern):
 	enums = [
 		ChannelAssignment,

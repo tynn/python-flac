@@ -247,6 +247,10 @@ PyFLAC_Enum_FromEnum_function(StreamMetadataPictureType, enum_member_StreamMetad
 static int
 flac_format_init (void)
 {
+	flac_FlacFormatErrorType = PyErr_NewExceptionWithDoc("flac.FlacFormatError", "FLAC format error", NULL, NULL);
+	if (!flac_FlacFormatErrorType)
+		return -1;
+
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(EntropyCodingMethodType), enum_member_EntropyCodingMethodType))
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(SubframeType), enum_member_SubframeType))
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(ChannelAssignment), enum_member_ChannelAssignment))
@@ -263,6 +267,9 @@ flac_format_init (void)
 static void
 flac_format_build (PyObject *module)
 {
+	Py_INCREF(PyFLAC_type(FlacFormatError));
+	PyFLAC_PyModule_AddType(module, FlacFormatError);
+
 	Py_INCREF(PyFLAC_type(EntropyCodingMethodType));
 	PyFLAC_PyModule_AddType(module, EntropyCodingMethodType);
 
