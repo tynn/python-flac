@@ -19,16 +19,7 @@
 
 import unittest
 
-def _load_modules () :
-	from . import test_flac__export
-	from . import test_flac_flac
-	from . import test_flac_format
-
-	for module in locals().values() :
-		yield module
-
 def load_tests (loader, tests, pattern) :
-	for module in _load_modules() :
-		tests.addTests(loader.loadTestsFromModule(module))
+	tests.addTests(loader.discover('.'))
 	return tests
 

@@ -20,7 +20,7 @@
 import unittest
 import flac.flac
 
-class FlacExportTest (unittest.TestCase) :
+class FlacFlacTest (unittest.TestCase) :
 
 	def _test_attrs (self, module) :
 		attrs = filter(lambda name : not name.startswith('_'), dir(module))
@@ -34,6 +34,11 @@ class FlacExportTest (unittest.TestCase) :
 	def test_format (self) :
 		import flac.format
 		self._test_attrs(flac.format)
+
+	def test_metadata0 (self) :
+		import flac.metadata0
+		self._test_attrs(flac.metadata0)
+
 
 if __name__ == "__main__" : unittest.main()
 
