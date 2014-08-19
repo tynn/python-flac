@@ -42,5 +42,6 @@ def load_tests(loader, tests, pattern):
 	]
 	return _enum._load_tests(loader, tests, *enums)
 
+
 if __name__ == "__main__" : unittest.main()
 

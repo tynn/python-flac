@@ -17,7 +17,6 @@
 
 """ libFLAC """
 
-from ._export import *
 from .format import *
 from .metadata0 import *
 

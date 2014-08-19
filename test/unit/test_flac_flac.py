@@ -27,10 +27,6 @@ class FlacFlacTest (unittest.TestCase) :
 		for attr in attrs :
 			self.assertIs(getattr(flac.flac, attr), getattr(module, attr))
 
-	def test__export (self) :
-		import flac._export
-		self._test_attrs(flac._export)
-
 	def test_format (self) :
 		import flac.format
 		self._test_attrs(flac.format)
