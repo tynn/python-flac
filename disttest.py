@@ -31,8 +31,38 @@
 		git pull disttest master
 """
 
-import imp, importlib, inspect, os, sys, unittest
+import importlib, inspect, os, sys, unittest
 from distutils.core import *
+
+
+def _import_module (module) :
+	if '/' in module :
+		if os.path.isabs(module) :
+			raise ImportError("Import by absolute filename is not supported")
+		module = os.path.splitext(module)[0]
+		if '.' in module :
+			raise ImportError("Import by filenames with '.' is not supported")
+		if module[-1] == '/' :
+			module = module[:-1]
+		module = module.replace(os.path.sep, '.')
+	return importlib.import_module(module)
+
+
+def _load_source_imp (name, pathname) :
+	import imp
+	imp.acquire_lock()
+	try : return imp.load_compiled(name, pathname)
+	except : return imp.load_source(name, pathname)
+	finally : imp.release_lock()
+
+def _load_source (path) :
+	pathname = os.path.abspath(path)
+	name = 'disttest._' + os.path.splitext(os.path.split(pathname)[1])[0]
+	try :
+		try : from importlib.machinery import SourceFileLoader
+		except : return _load_source_imp(name, pathname)
+		return SourceFileLoader(name, pathname).load_module()
+	except : raise ImportError("No module named {}".format(path))
 
 
 class test (Command) :
@@ -56,6 +86,9 @@ class test (Command) :
 		self.set_unittest_options()
 		if not self.test_suite and hasattr(self.distribution, 'test_suite') :
 			self.test_suite = getattr(self.distribution, 'test_suite')
+
+		if self.build_dir :
+			self.skip_build = True
 
 		self.set_undefined_options('build', ('build_lib', 'build_dir'))
 		self.set_undefined_options('install', ('skip_build', 'skip_build'))
@@ -86,55 +119,23 @@ class test (Command) :
 		if not self.dry_run :
 			unittest.TextTestRunner().run(tests)
 
+		sys.path.remove(self.build_dir)
+
 	def load_tests (self, tests) :
 		if isinstance(tests, (unittest.TestCase, unittest.TestSuite)) :
 			return tests
 
 		if isinstance(tests, str) :
-			tests = self._load_module(tests)
+			try : tests = _import_module(tests)
+			except : tests = _load_source(tests)
 
 		if inspect.ismodule(tests) :
 			return self.loader.loadTestsFromModule(tests)
 
 		raise ValueError('Not a test suite: {}'.format(tests))
 
-	def _load_module (self, test) :
-		try : return importlib.import_module(test)
-		except :
-			try : return importlib.import_module(test.replace(os.path.sep, '.'))
-			except : pass
 
-		test = os.path.splitext(test)
-		try : return importlib.import_module(test[0])
-		except :
-			try : return importlib.import_module(test[0].replace(os.path.sep, '.'))
-			except : pass
-
-		if test[0].endswith(os.path.sep) :
-			try : return importlib.import_module(test[0][:-1].replace(os.path.sep, '.'))
-			except : pass
-
-		test = os.path.abspath(os.path.dirname(test[0])), os.path.sep, os.path.basename(test[0]), test[1]
-		if not test[2] :
-			raise ImportError("Empty module name")
-
-		if test[0] not in sys.path :
-			sys.path.append(test[0])
-
-		imp.acquire_lock()
-		try : return imp.load_compiled('disttest._' + test[2], ''.join(test))
-		except :
-			try : return imp.load_source('disttest._' + test[2], ''.join(test))
-			except :
-				info = imp.find_module(test[2])
-				try : imp.load_module('disttest._' + test[2], *info)
-				finally : info[0].close()
-		finally : imp.release_lock()
-
-		raise ImportError("No module named {}".format(test[2]))
-
-
-def extend_setup (_setup = setup, _Distribution = Distribution) :
+def _extend_setup (_setup = setup, _Distribution = Distribution) :
 	"""
 		Extend the default or any other compatible distutils setup function.
 		The Distribution class used with setup must be supplied, if setup
@@ -150,15 +151,14 @@ def extend_setup (_setup = setup, _Distribution = Distribution) :
 			attrs['cmdclass']['test'] = test
 
 		if 'distclass' not in attrs :
-			attrs['distclass'] = type('Distribution', (_Distribution, object), dict(test_suite = None))
+			attrs['distclass'] = type('Distribution', (_Distribution, object), {"test_suite": None})
 		elif not hasattr(attrs['distclass'], 'test_suite') :
-			attrs['distclass'] = type('Distribution', (attrs['distclass'], object), dict(test_suite = None))
+			attrs['distclass'] = type('Distribution', (attrs['distclass'], object), {"test_suite": None})
 
 		_setup(**attrs)
 
 	return setup
 
 
-setup = extend_setup()
+setup = _extend_setup()
 setup_keywords = setup_keywords + ('test_suite',)
-
