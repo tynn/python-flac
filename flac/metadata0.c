@@ -151,8 +151,8 @@ static PyMethodDef flac_metadata0_functions[] = {
 static int
 flac_metadata0_init (void)
 {
-	PyFLAC_CHECK_status(PyFLAC_import_format())
-	PyFLAC_CHECK_status(PyFLAC_import_metadata())
+	PyFLAC_CHECK_status(PyFLAC_import_format());
+	PyFLAC_CHECK_status(PyFLAC_import_metadata());
 	return 0;
 }
 

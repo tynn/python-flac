@@ -90,7 +90,12 @@
 #define PyFLAC_byte(byte_value) PyFLAC_uint8(byte_value)
 
 
-#define PyFLAC_CHECK_status(status) if (status < 0) { return -1; }
+#define PyFLAC_CHECK(test,error) do { if (test) return error; } while (0)
+
+#define PyFLAC_CHECK_status(status) PyFLAC_CHECK(status < 0,-1)
+
+#define PyFLAC_CHECK_delete(value,member) PyFLAC_CHECK(!(value),(PyErr_Format(PyExc_TypeError, "cannot delete the member %s", member), -1))
+
 
 #define PyFLAC_type(type) &PyFLAC_##type##Type
 

@@ -29,29 +29,31 @@ static PyMethodDef flac__export_functions[] = {
 static PyObject *objects[5];
 
 
+#define PyFLAC_CHECK_object(object) PyFLAC_CHECK(!(object),-1)
+
 static int
 flac__export_init (void)
 {
 	PyObject *object;
 
 	object = PyInt_FromLong(FLAC_API_VERSION_CURRENT);
-	if (object == NULL) return -1;
+	PyFLAC_CHECK_object(object);
 	objects[0] = object;
 
 	object = PyInt_FromLong(FLAC_API_VERSION_REVISION);
-	if (object == NULL) return -1;
+	PyFLAC_CHECK_object(object);
 	objects[1] = object;
 
 	object = PyInt_FromLong(FLAC_API_VERSION_AGE);
-	if (object == NULL) return -1;
+	PyFLAC_CHECK_object(object);
 	objects[2] = object;
 
 	object = Py_BuildValue("(iii)", FLAC_API_VERSION_CURRENT, FLAC_API_VERSION_REVISION, FLAC_API_VERSION_AGE);
-	if (object == NULL) return -1;
+	PyFLAC_CHECK_object(object);
 	objects[3] = object;
 
 	object = PyBool_FromLong(FLAC_API_SUPPORTS_OGG_FLAC);
-	if (object == NULL) return -1;
+	PyFLAC_CHECK_object(object);
 	objects[4] = object;
 
 	return 0;

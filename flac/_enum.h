@@ -77,7 +77,7 @@ flac_Enum_add_member (PyTypeObject *type, flac_Enum_Member *member)
 	((struct flac_EnumObject *) member->e_object)->e_value = member->e_value;
 	((struct flac_EnumObject *) member->e_object)->e_name = member->e_name;
 
-	PyFLAC_CHECK_status(PyObject_GenericSetAttr((PyObject *) type, PyString_FromString(member->e_name), member->e_object))
+	PyFLAC_CHECK_status(PyObject_GenericSetAttr((PyObject *) type, PyString_FromString(member->e_name), member->e_object));
 
 	return 0;
 }
@@ -113,12 +113,12 @@ PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 	type->tp_str = (reprfunc) flac_Enum_str;
 	type->tp_dict = NULL;
 
-	PyFLAC_CHECK_status(PyType_Ready(type))
+	PyFLAC_CHECK_status(PyType_Ready(type));
 
 	for (i = 0; member[i].e_name; i++)
-		PyFLAC_CHECK_status(flac_Enum_add_member(type, &member[i]))
+		PyFLAC_CHECK_status(flac_Enum_add_member(type, &member[i]));
 
-	PyFLAC_CHECK_status(flac_Enum_sort_member(member, i))
+	PyFLAC_CHECK_status(flac_Enum_sort_member(member, i));
 
 	return 0;
 }
