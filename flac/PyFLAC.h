@@ -26,6 +26,8 @@
 #if PY_MAJOR_VERSION >= 3
 	#define __PyFLAC3__
 
+	#define Py_TPFLAGS_HAVE_ITER 0
+
 	#if PY_MAJOR_VERSION >= 4
 
 		#define PyString_GET_SIZE PyUnicode_GET_LENGTH
@@ -44,30 +46,15 @@
 	#define PyString_FromString PyUnicode_FromString
 	#define PyString_FromStringAndSize PyUnicode_FromStringAndSize
 
-	#define PyFLAC_data_format "y"
-
-	#define PyFLAC_unsigned(unsigned_value) PyLong_FromUnsignedLong((unsigned long) unsigned_value)
-
 #else // PY_MAJOR_VERSION >= 3
 
-	#define PyFLAC_data_format "s"
+	#define PyLong_FromUnsignedLong(unsigned_value) \
+		((long) unsigned_value < 0 ? PyLong_FromUnsignedLong((unsigned long) unsigned_value) : PyFLAC_int(unsigned_value))
 
-	#define PyFLAC_unsigned(unsigned_value) ((long) unsigned_value < 0 ? PyLong_FromUnsignedLong((unsigned long) unsigned_value) : PyFLAC_int(unsigned_value))
+	#define PyLong_FromUnsignedLongLong(unsigned_value) \
+		((unsigned_value > (unsigned PY_LONG_LONG) (unsigned long) -1) ? PyLong_FromUnsignedLongLong(unsigned_value) : PyLong_FromUnsignedLong((unsigned long) unsigned_value))
 
 #endif // PY_MAJOR_VERSION >= 3
-
-
-#define PyFLAC_RAISE_NotImplementedError { \
-	PyErr_SetString(PyExc_NotImplementedError, "someone should have implemented this"); \
-	return NULL; \
-}
-#define PyFLAC_setter_NotImplemented \
-static int \
-flac_setter_NotImplemented (PyObject *self, PyObject *value, void *closure) \
-{ \
-	PyErr_SetString(PyExc_NotImplementedError, "setter not implemented yet"); \
-	return -1; \
-}
 
 
 #define PyFLAC_name(type) "flac." #type
@@ -80,9 +67,21 @@ flac_setter_NotImplemented (PyObject *self, PyObject *value, void *closure) \
 #define PyFLAC_setter_error(type) { PyFLAC_RuntimeError("wrong use of setter of " PyFLAC_name(type)); return -1; }
 
 
+#define PyFLAC_bool(bool_value) PyBool_FromLong((long) bool_value)
+
 #define PyFLAC_int(int_value) PyInt_FromLong((long) int_value)
 
+#define PyFLAC_string(string_value) PyString_FromString((char *) string_value)
+
+#define PyFLAC_string2(string_value,string_length) PyString_FromStringAndSize((char *) string_value, (Py_ssize_t) string_length)
+
+#define PyFLAC_data(data,length) PyBytes_FromStringAndSize((char *) data, (Py_ssize_t) length)
+
+#define PyFLAC_off_t(off_value) PyLong_FromLongLong((PY_LONG_LONG) off_value)
+
 #define PyFLAC_uint64(uint64_value) PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) uint64_value)
+
+#define PyFLAC_unsigned(unsigned_value) PyLong_FromUnsignedLong((unsigned long) unsigned_value)
 
 #define PyFLAC_uint32(uint32_value) PyFLAC_unsigned(uint32_value)
 
@@ -90,27 +89,6 @@ flac_setter_NotImplemented (PyObject *self, PyObject *value, void *closure) \
 
 #define PyFLAC_byte(byte_value) PyFLAC_uint8(byte_value)
 
-#define PyFLAC_RETURN_bool(bool_value) { if (bool_value) { Py_RETURN_TRUE; } else { Py_RETURN_FALSE; } }
-
-#define PyFLAC_RETURN_bool_OR_RAISE(bool_value) { if (PyErr_Occurred()) { return NULL; } else PyFLAC_RETURN_bool(bool_value) }
-
-#define PyFLAC_RETURN_int(int_value) return PyFLAC_int(int_value);
-
-#define PyFLAC_RETURN_string(string_value) return PyString_FromString((char *) string_value);
-
-#define PyFLAC_RETURN_string2(string_value,string_length) return PyString_FromStringAndSize((char *) string_value, (Py_ssize_t) string_length);
-
-#define PyFLAC_RETURN_data(data,length) return Py_BuildValue(PyFLAC_data_format "#", data, length);
-
-#define PyFLAC_RETURN_unsigned(unsigned_value) return PyFLAC_unsigned(unsigned_value);
-
-#define PyFLAC_RETURN_uint64(uint64_value) return PyFLAC_uint64(uint64_value);
-
-#define PyFLAC_RETURN_uint32(uint32_value) PyFLAC_RETURN_unsigned(uint32_value)
-
-#define PyFLAC_RETURN_uint8(uint8_value) PyFLAC_RETURN_unsigned(uint8_value)
-
-#define PyFLAC_RETURN_byte(byte_value) PyFLAC_RETURN_uint8(byte_value)
 
 #define PyFLAC_CHECK_status(status) if (status < 0) { return -1; }
 
