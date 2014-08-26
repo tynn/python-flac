@@ -54,7 +54,7 @@ def _ext_modules () :
 
 setup(
 	name = "python-flac",
-	version = "0.0.1",
+	version = "0.0a",
 	author = 'Christian Schmitz',
 	author_email = 'tynn.dev@gmail.com',
 	license = 'LGPLv3+',
