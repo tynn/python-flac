@@ -28,6 +28,8 @@
 
 #define PyFLAC_Enum_AsInt(object) (((struct flac_EnumObject *) object)->e_value)
 
+#define PyFLAC_Enum_AsEnum(object,type) ((FLAC__##type) PyFLAC_Enum_AsInt(object))
+
 struct flac_EnumObject {
 	PyObject_HEAD
 	int e_value;
