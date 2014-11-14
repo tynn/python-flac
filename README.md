@@ -1,8 +1,21 @@
 python-flac
 ===========
 
-This is (supposed to be) a pure Python C wrapper for [libFLAC](https://xiph.org/flac/).
+This is a work in progress for a pure Python C wrapper for [libFLAC](https://xiph.org/flac/).
 
-I am aware of [pyflac](https://github.com/dsully/pyflac) now, but could not find it earlier.  
-Since it is time for me to learn how the Python C API works, I thought it might be a good idea doing it this way.
+
+Native flac modules
+-------------------
+
+`flac._export` contains some compiletime information about the used FLAC Library.  
+`flac.format` contains some common enums.  
+`flac.metadata` contains the definitions of the metadata objects.  
+`flac.metadata0` contains the level 0 metadata API.
+`flac.metadata1` contains the level 1 metadata API.
+
+Python flac modules
+-------------------
+
+`flac` only provides all information found in `flac._export`.  
+`flac.flac` provides every member of any other native module.
 
