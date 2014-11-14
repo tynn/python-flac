@@ -23,6 +23,8 @@
 #include "format.h"
 #include "metadata.h"
 
+#include "_unsigned.h"
+
 
 static PyObject *
 flac_metadata0_get_streaminfo (PyObject *null, PyObject *args)
@@ -97,29 +99,57 @@ flac_metadata0_get_cuesheet (PyObject *null, PyObject *args)
 
 
 static PyObject *
-flac_metadata0_get_picture (PyObject *null, PyObject *args)
+flac_metadata0_get_picture (PyObject *null, PyObject *args, PyObject *kwds)
 {
 	FLAC__StreamMetadata_Picture_Type picture_type;
 	FLAC__StreamMetadata *metadata;
-	PyObject *py_picture_type;
-	PyObject *py_metadata;
-	char *filename;
+	PyObject *py_picture_type, *py_metadata;
+	char *filename, *mime_type, *description;
+	unsigned max_width, max_height, max_depth, max_colors;
+	int parsed;
 
-	(void)null;
+	static char *kwlist[] = {"filename", "picture_type", "mime_type", "description", "max_width", "max_height", "max_depth", "max_colors",  NULL};
 
-	if (!PyArg_ParseTuple(args, "s|O!ssIIII", &filename, PyFLAC_type(StreamMetadataPictureType), &py_picture_type))
-		return NULL;
+	mime_type = description = NULL;
+	max_width = max_height = max_depth = max_colors = -1;
 
-	picture_type = py_picture_type ? PyFLAC_Enum_AsInt(py_picture_type) : -1;
+	parsed = PyArg_ParseTupleAndKeywords(args, kwds, "s|O!esesO&O&O&O&", kwlist,
+					&filename,
+					PyFLAC_type(StreamMetadataPictureType), &py_picture_type,
+					"ascii", &mime_type,
+					"utf-8", &description,
+					_unsigned, &max_width,
+					_unsigned, &max_height,
+					_unsigned, &max_depth,
+					_unsigned, &max_colors);
 
-	if (FLAC__metadata_get_picture(filename, &metadata, picture_type, NULL, NULL, -1, -1, -1, -1))
+	if (parsed)
 	{
-		py_metadata = PyFLAC_StreamMetadata_FromClass(metadata);
-		FLAC__metadata_object_delete(metadata);
-		return py_metadata;
+		picture_type = py_picture_type ? PyFLAC_Enum_AsInt(py_picture_type) : -1;
+
+		if (FLAC__metadata_get_picture(filename, &metadata, picture_type, mime_type, (FLAC__byte *) description, max_width, max_height, max_depth, max_colors))
+		{
+			py_metadata = PyFLAC_StreamMetadata_FromClass(metadata);
+			FLAC__metadata_object_delete(metadata);
+		}
+		else
+		{
+			Py_INCREF(Py_None);
+			py_metadata = Py_None;
+		}
+	}
+	else
+	{
+		py_metadata = NULL;
 	}
 
-	Py_RETURN_NONE;
+	if (mime_type)
+		PyMem_Free(mime_type);
+
+	if (description)
+		PyMem_Free(description);
+
+	return py_metadata;
 }
 
 
@@ -142,14 +172,14 @@ static PyMethodDef flac_metadata0_functions[] = {
 	}, {
 		"get_picture",
 		(PyCFunction) flac_metadata0_get_picture,
-		METH_VARARGS,
+		METH_VARARGS | METH_KEYWORDS,
 		"Metadata level 0 interface: read picture of FLAC file"
 	}, { NULL }		/* Sentinel */
 };
 
 
 static int
-flac_metadata0_init (void)
+flac_metadata0_init ( void )
 {
 	PyFLAC_CHECK_status(PyFLAC_import_format());
 	PyFLAC_CHECK_status(PyFLAC_import_metadata());

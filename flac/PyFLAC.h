@@ -62,9 +62,9 @@
 
 #define PyFLAC_RuntimeError(msg) PyErr_SetString(PyExc_RuntimeError, msg)
 
-#define PyFLAC_getter_error(type) { PyFLAC_RuntimeError("wrong use of getter of " PyFLAC_name(type)); return NULL; }
+#define PyFLAC_getter_error(type) (PyFLAC_RuntimeError("wrong use of getter of " PyFLAC_name(type)), NULL)
 
-#define PyFLAC_setter_error(type) { PyFLAC_RuntimeError("wrong use of setter of " PyFLAC_name(type)); return -1; }
+#define PyFLAC_setter_error(type) (PyFLAC_RuntimeError("wrong use of setter of " PyFLAC_name(type)), -1)
 
 
 #define PyFLAC_bool(bool_value) PyBool_FromLong((long) bool_value)

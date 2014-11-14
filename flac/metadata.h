@@ -29,13 +29,8 @@ extern "C" {
 typedef struct {
 	PyObject_HEAD
 	FLAC__StreamMetadata *metadata;
-	PyObject *data;
+	PyObject *metadata_type;
 } PyFLAC_StreamMetadataObject;
-
-typedef struct {
-	PyObject_HEAD
-	PyFLAC_StreamMetadataObject *parent;
-} PyFLAC_StreamMetadataDataObject;
 
 
 #include "_C_API.h"
@@ -54,7 +49,7 @@ PyFLAC__C_API_DEF(2)
 	PyFLAC__C_API_CHECK \
 }
 
-static PyObject * PyFLAC_StreamMetadata_FromClass (const FLAC__StreamMetadata *metadata);
+static PyObject * PyFLAC_StreamMetadata_FromClass (const FLAC__StreamMetadata *);
 
 #else // __PyFLAC_metadata_MODULE__
 

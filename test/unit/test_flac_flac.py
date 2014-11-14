@@ -31,9 +31,17 @@ class FlacFlacTest (unittest.TestCase) :
 		import flac.format
 		self._test_attrs(flac.format)
 
+	def test_metadata (self) :
+		import flac.metadata
+		self._test_attrs(flac.metadata)
+
 	def test_metadata0 (self) :
 		import flac.metadata0
 		self._test_attrs(flac.metadata0)
+
+	def test_metadata1 (self) :
+		import flac.metadata1
+		self._test_attrs(flac.metadata1)
 
 
 if __name__ == "__main__" : unittest.main()

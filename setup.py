@@ -25,15 +25,36 @@ def _sources (*files) :
 headers = {
 	"_export": [],
 	"format": [
-		'enum.h',
-		'_enum.h',
-		'format.h',
-	],
+			'enum.h',
+			'format.h',
+			'_enum.h',
+		],
+	"metadata": [
+			'enum.h',
+			'format.h',
+			'metadata.h',
+			'_application_id.h',
+			'_bool.h',
+			'_byte.h',
+			'_uintX.h',
+			'_uint8.h',
+			'_uint32.h',
+			'_uint64.h',
+			'_unsigned.h',
+		],
 	"metadata0": [
-		'enum.h',
-		'format.h',
-		'metadata.h',
-	],
+			'enum.h',
+			'format.h',
+			'metadata.h',
+			'_uintX.h',
+			'_unsigned.h',
+		],
+	"metadata1": [
+			'enum.h',
+			'format.h',
+			'metadata.h',
+			'_bool.h',
+		],
 }
 
 def _headers () :
