@@ -55,6 +55,7 @@ headers = {
 			'metadata.h',
 			'_bool.h',
 		],
+	"metadata2": [],
 }
 
 def _headers () :

@@ -43,6 +43,10 @@ class FlacFlacTest (unittest.TestCase) :
 		import flac.metadata1
 		self._test_attrs(flac.metadata1)
 
+	def test_metadata2 (self) :
+		import flac.metadata2
+		self._test_attrs(flac.metadata2)
+
 
 if __name__ == "__main__" : unittest.main()
 
