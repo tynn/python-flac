@@ -17,6 +17,8 @@
 
 """ Unit tests for the flac.metadata module """
 
+try : from . import _enum
+except : import _enum
 import unittest
 from flac.metadata import *
 
@@ -513,6 +515,10 @@ class FlacStreamMetadataCueSheetTrackTest (AttrsTest, unittest.TestCase) :
 							len(self.obj.indices))
 		self.assertTrue(self.obj.delete_index(1))
 		self.assertEqual(self.obj.indices, [self._attrs_['indices'][0]])
+
+
+class StreamMetadataPictureTypeTest (_enum.EnumTest) :
+	_type = StreamMetadataPictureType
 
 
 if __name__ == "__main__" : unittest.main()

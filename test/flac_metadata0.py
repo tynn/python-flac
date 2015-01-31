@@ -16,7 +16,6 @@
 #	You should have received a copy of the GNU General Public License
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
-from flac.format import StreamMetadataPictureType as picture_type
 import flac.metadata0 as flac
 import mimetypes, os, signal, sys
 
@@ -69,7 +68,7 @@ def get_cuesheet (filename) :
 					s, m = m % 60, m // 60
 					_printf('    INDEX {0:02d} {1:02d}:{2:02d}:{3:02d}', index.number, m, s, f)
 
-def _get_picture (filename, picture_type) :
+def get_picture (filename, picture_type) :
 	metadata = flac.get_picture(filename, picture_type)
 	if metadata :
 		metadata = metadata.data
@@ -93,7 +92,7 @@ def get_pictures (filename) :
 		'VIDEO_SCREEN_CAPTURE', 'FISH', 'ILLUSTRATION',
 		'BAND_LOGOTYPE', 'PUBLISHER_LOGOTYPE',
 	]
-	_printt(*filter(bool, map(lambda t : _get_picture(filename, getattr(picture_type, t)), picture_types)))
+	_printt(*filter(bool, map(lambda t : get_picture(filename, getattr(flac.StreamMetadataPictureType, t)), picture_types)))
 
 def main () :
 	signal.signal(signal.SIGINT, signal.SIG_DFL)

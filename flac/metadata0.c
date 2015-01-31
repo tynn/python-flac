@@ -20,7 +20,6 @@
 #include "PyFLAC.h"
 #include "enum.h"
 
-#include "format.h"
 #include "metadata.h"
 
 #include "_unsigned.h"
@@ -181,7 +180,6 @@ static PyMethodDef flac_metadata0_functions[] = {
 static int
 flac_metadata0_init ( void )
 {
-	PyFLAC_CHECK_status(PyFLAC_import_format());
 	PyFLAC_CHECK_status(PyFLAC_import_metadata());
 	return 0;
 }
@@ -189,7 +187,10 @@ flac_metadata0_init ( void )
 
 static void
 flac_metadata0_build (PyObject *module)
-{}
+{
+	Py_INCREF(PyFLAC_type(StreamMetadataPictureType));
+	PyFLAC_PyModule_AddType(module, StreamMetadataPictureType);
+}
 
 
 PyFLAC_MODINIT(

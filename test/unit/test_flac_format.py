@@ -38,7 +38,6 @@ def load_tests(loader, tests, pattern):
 		FrameNumberType,
 		SubframeType,
 		MetadataType,
-		StreamMetadataPictureType,
 	]
 	return _enum._load_tests(loader, tests, *enums)
 

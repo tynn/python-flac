@@ -33,17 +33,25 @@ typedef struct {
 } PyFLAC_StreamMetadataObject;
 
 
+#include "enum.h"
+
 #include "_C_API.h"
 
 #define			_StreamMetadata_type_								 0
-#define			_StreamMetadata_FromClass_							 1
+#define			_StreamMetadataPictureType_type_					 1
+
+#define			_StreamMetadata_FromClass_							 2
+
+#define			_StreamMetadataPictureType_FromEnum_				 3
 
 
 #ifdef __PyFLAC_metadata_MODULE__
 
-PyFLAC__C_API_DEF(2)
+PyFLAC__C_API_DEF(4)
 #define _c_api_init { \
 	PyFLAC_type_PUT(StreamMetadata,_StreamMetadata_type_) \
+	PyFLAC_type_PUT(StreamMetadataPictureType,_StreamMetadataPictureType_type_) \
+	PyFLAC_Enum_FromEnum_PUT(StreamMetadataPictureType,_StreamMetadataPictureType_FromEnum_) \
 	PyFLAC__C_API_PUT(_StreamMetadata_FromClass_,PyFLAC_StreamMetadata_FromClass) \
 	PyFLAC__C_API_INIT(metadata) \
 	PyFLAC__C_API_CHECK \
@@ -51,15 +59,22 @@ PyFLAC__C_API_DEF(2)
 
 static PyObject * PyFLAC_StreamMetadata_FromClass (const FLAC__StreamMetadata *);
 
+PyFLAC_Enum_FromEnum_DEF(StreamMetadataPictureType);
+
 #else // __PyFLAC_metadata_MODULE__
 
 PyFLAC__C_API(metadata)
 
 #define PyFLAC_StreamMetadataType \
 	PyFLAC_type_API(metadata,_StreamMetadata_type_)
+#define PyFLAC_StreamMetadataPictureTypeType \
+	PyFLAC_type_API(metadata,_StreamMetadataPictureType_type_)
 
 #define PyFLAC_StreamMetadata_FromClass \
 	(*(PyObject * (*)(const FLAC__StreamMetadata *)) PyFLAC_API(metadata)[_StreamMetadata_FromClass_])
+
+#define PyFLAC_StreamMetadataPictureType_FromEnum \
+	PyFLAC_Enum_FromEnum_API(metadata,_StreamMetadataPictureType_FromEnum_)
 
 #endif // __PyFLAC_metadata_MODULE__
 
