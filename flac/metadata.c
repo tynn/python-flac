@@ -407,7 +407,7 @@ flac_StreamMetadata_dealloc (PyFLAC_StreamMetadataObject *self)
 	if (self->metadata)
 		FLAC__metadata_object_delete(self->metadata);
 	Py_XDECREF(self->metadata_type);
-	Py_TYPE(self)->tp_free((PyObject *) self);
+	PyObject_Del((PyObject *) self);
 }
 
 
@@ -968,7 +968,7 @@ flac_StreamMetadataSeekPoint_dealloc (flac_StreamMetadataSeekPointObject *self)
 	Py_DECREF(self->sample_number);
 	Py_DECREF(self->stream_offset);
 	Py_DECREF(self->frame_samples);
-	Py_TYPE(self)->tp_free((PyObject *) self);
+	PyObject_Del((PyObject *) self);
 }
 
 
@@ -2249,7 +2249,7 @@ flac_StreamMetadataCueSheetIndex_dealloc (flac_StreamMetadataCueSheetIndexObject
 {
 	Py_DECREF(self->offset);
 	Py_DECREF(self->number);
-	Py_TYPE(self)->tp_free((PyObject *) self);
+	PyObject_Del((PyObject *) self);
 }
 
 
