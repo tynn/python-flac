@@ -517,8 +517,8 @@ class FlacStreamMetadataCueSheetTrackTest (AttrsTest, unittest.TestCase) :
 		self.assertEqual(self.obj.indices, [self._attrs_['indices'][0]])
 
 
-class StreamMetadataPictureTypeTest (_enum.EnumTest) :
-	_type = StreamMetadataPictureType
+def load_tests(loader, tests, pattern):
+	return _enum._load_tests(loader, tests, StreamMetadataPictureType)
 
 
 if __name__ == "__main__" : unittest.main()
