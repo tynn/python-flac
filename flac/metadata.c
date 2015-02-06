@@ -33,6 +33,8 @@
 #include "_uint64.h"
 #include "_unsigned.h"
 
+#include "_list_of_type.h"
+
 
 #define PyFLAC_CHECK_metadata_type(metadata_type) \
 	if (metadata_type < 0 || metadata_type >= FLAC__METADATA_TYPE_UNDEFINED) \
@@ -145,84 +147,6 @@ static flac_Enum_Member enum_member_StreamMetadataPictureType[] = {
 	),
 	{ NULL }		/* Sentinel */
 };
-
-
-static void
-flac_free_list_of_type (PyObject **list, Py_ssize_t count)
-{
-	if (list)
-	{
-		while (count--)
-			Py_DECREF(list[count]);
-		PyMem_Free(list);
-	}
-}
-
-
-static int
-flac_list_of_type (PyObject *object, PyTypeObject *type, PyObject ***ret_list, Py_ssize_t *ret_count)
-{
-	PyObject *item, **list;
-	Py_ssize_t count, i;
-
-	if (PyObject_TypeCheck(object, type))
-	{
-		*ret_count = 1;
-		*ret_list = NULL;
-		return 1;
-	}
-
-	list = NULL;
-
-	if (PyTuple_Check(object) || PyList_Check(object))
-	{
-		count = PySequence_Size(object);
-		if (count == -1)
-			return 0;
-
-		if (!count)
-		{
-			*ret_count = 0;
-			*ret_list = NULL;
-			return 1;
-		}
-
-		list = (PyObject **) PyMem_Malloc(count * sizeof(PyObject *));
-		if (!list)
-		{
-			PyErr_NoMemory();
-			return 0;
-		}
-
-		for (i = 0; i < count; i++)
-		{
-			item = PySequence_GetItem(object, i);
-			if (!item)
-			{
-				flac_free_list_of_type(list, i);
-				return 0;
-			}
-
-			if (!PyObject_TypeCheck(item, type))
-				break;
-
-			Py_INCREF(item);
-			list[i] = item;
-		}
-
-		if (i == count)
-		{
-			*ret_count = count;
-			*ret_list = list;
-			return 1;
-		}
-
-		flac_free_list_of_type(list, i);
-	}
-
-	PyErr_Format(PyExc_TypeError, "must be a list of %.50s", type->tp_name);
-	return 0;
-}
 
 
 static int

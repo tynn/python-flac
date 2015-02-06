@@ -19,8 +19,7 @@ from disttest import Extension, setup
 import test.unit
 
 
-def _sources (*files) :
-	return ['flac/' + file for file in files]
+def _sources (*files) : return ['flac/' + file for file in files]
 
 headers = {
 	"_export": [],
@@ -36,6 +35,8 @@ headers = {
 			'_application_id.h',
 			'_bool.h',
 			'_byte.h',
+			'_enum.h',
+			'_list_of_type.h',
 			'_uintX.h',
 			'_uint8.h',
 			'_uint32.h',
@@ -68,15 +69,6 @@ def _headers () :
 		for header in headers[module] :
 			yield header
 
-def _ext_modules () :
-	return [Extension(
-			'flac/' + module,
-			language = 'c',
-			libraries = ['FLAC'],
-			sources = _sources(module + '.c'),
-			depends = _sources('PyFLAC.h', '_C_API.h', *headers[module])
-		) for module in headers]
-
 setup(
 	name = "python-flac",
 	version = "0.0a",
@@ -89,7 +81,13 @@ setup(
 	platforms = ['Linux'],
 	headers = _sources(*set(_headers())),
 	packages = ["flac"],
-	ext_modules = _ext_modules(),
+	ext_modules = [Extension(
+			'flac/' + module,
+			language = 'c',
+			libraries = ['FLAC'],
+			sources = _sources(module + '.c'),
+			depends = _sources('PyFLAC.h', '_C_API.h', *headers[module])
+		) for module in headers],
 	test_suite = test.unit
 )
 
