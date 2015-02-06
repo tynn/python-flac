@@ -19,6 +19,8 @@
 
 #include "PyFLAC.h"
 
+#include "metadata.h"
+
 
 static PyMethodDef flac_metadata2_functions[] = {
 	{ NULL }		/* Sentinel */
@@ -28,6 +30,8 @@ static PyMethodDef flac_metadata2_functions[] = {
 static int
 flac_metadata2_init ( void )
 {
+	PyFLAC_CHECK_status(PyFLAC_import_metadata());
+
 	return 0;
 }
 

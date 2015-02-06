@@ -55,7 +55,10 @@ headers = {
 			'metadata.h',
 			'_bool.h',
 		],
-	"metadata2": [],
+	"metadata2": [
+			'enum.h',
+			'metadata.h',
+		],
 }
 
 def _headers () :
