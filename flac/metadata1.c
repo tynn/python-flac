@@ -57,7 +57,7 @@ flac_MetadataSimpleIterator_PyErr_FromIteratorStatus (flac_MetadataSimpleIterato
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_OK:
 			self->init = init;
 			return 1;
-		case  FLAC__METADATA_SIMPLE_ITERATOR_STATUS_ILLEGAL_INPUT:
+		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_ILLEGAL_INPUT:
 			self->init = init;
 			return 0;
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_A_FLAC_FILE:

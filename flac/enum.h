@@ -24,7 +24,7 @@
 
 #define PyFLAC_Enum_FromEnum(e_value,type) PyFLAC_Enum_FromEnum_NAME(type) (e_value)
 
-#define PyFLAC_Enum_FromEnum_DEF(type) static PyObject * PyFLAC_Enum_FromEnum(int e_value,type)
+#define PyFLAC_Enum_FromEnum_DEF(type) static PyObject * PyFLAC_Enum_FromEnum (int e_value,type)
 
 #define PyFLAC_Enum_AsInt(object) (((struct flac_EnumObject *) object)->e_value)
 

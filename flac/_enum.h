@@ -49,12 +49,6 @@ typedef struct {
 } flac_Enum_Member;
 
 
-static void
-flac_Enum_dealloc (PyObject *self)
-{
-	Py_TYPE(self)->tp_free(self);
-}
-
 static PyObject *
 flac_Enum_repr (PyObject *self)
 {
@@ -70,14 +64,19 @@ flac_Enum_str (PyObject *self)
 static int
 flac_Enum_add_member (PyTypeObject *type, flac_Enum_Member *member)
 {
-	member->e_object = PyType_GenericNew(type, NULL, NULL);
+	PyObject *name = PyString_FromString(member->e_name);
+	if (!name)
+		return -1;
+
+	member->e_object = PyObject_New(PyObject, type);
 	if (!member->e_object)
 		return -1;
 
 	((struct flac_EnumObject *) member->e_object)->e_value = member->e_value;
 	((struct flac_EnumObject *) member->e_object)->e_name = member->e_name;
 
-	PyFLAC_CHECK_status(PyObject_GenericSetAttr((PyObject *) type, PyString_FromString(member->e_name), member->e_object));
+	PyFLAC_CHECK_status(PyObject_GenericSetAttr((PyObject *) type, name, member->e_object));
+	Py_DECREF(name);
 
 	return 0;
 }
@@ -93,7 +92,10 @@ flac_Enum_sort_member (flac_Enum_Member *member, int member_count)
 		{
 			j = member[i].e_value;
 			if (member[j].e_value == j)
+			{
+				PyFLAC_RuntimeError("repeating enum value");
 				return -1;
+			}
 
 			tmp = member[j];
 			member[j] = member[i];
@@ -106,19 +108,21 @@ flac_Enum_sort_member (flac_Enum_Member *member, int member_count)
 static int
 PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 {
-	int i;
+	int i = 0;
 
-	type->tp_dealloc = (destructor) flac_Enum_dealloc;
+	type->tp_dealloc = (destructor) PyObject_Del;
 	type->tp_repr = (reprfunc) flac_Enum_repr;
 	type->tp_str = (reprfunc) flac_Enum_str;
 	type->tp_dict = NULL;
 
+	while (member[i].e_name)
+		i++;
+	PyFLAC_CHECK_status(flac_Enum_sort_member(member, i));
+
 	PyFLAC_CHECK_status(PyType_Ready(type));
 
-	for (i = 0; member[i].e_name; i++)
+	while (i--)
 		PyFLAC_CHECK_status(flac_Enum_add_member(type, &member[i]));
-
-	PyFLAC_CHECK_status(flac_Enum_sort_member(member, i));
 
 	return 0;
 }
