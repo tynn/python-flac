@@ -30,7 +30,7 @@ flac_metadata0_get_streaminfo (PyObject *null, PyObject *args)
 {
 	FLAC__StreamMetadata *metadata;
 	PyObject *py_metadata;
-	char *filename;
+	const char *filename;
 
 	(void)null;
 
@@ -56,7 +56,7 @@ flac_metadata0_get_tags (PyObject *null, PyObject *args)
 {
 	FLAC__StreamMetadata *metadata;
 	PyObject *py_metadata;
-	char *filename;
+	const char *filename;
 
 	(void)null;
 
@@ -79,7 +79,7 @@ flac_metadata0_get_cuesheet (PyObject *null, PyObject *args)
 {
 	FLAC__StreamMetadata *metadata;
 	PyObject *py_metadata;
-	char *filename;
+	const char *filename;
 
 	(void)null;
 
@@ -103,7 +103,8 @@ flac_metadata0_get_picture (PyObject *null, PyObject *args, PyObject *kwds)
 	FLAC__StreamMetadata_Picture_Type picture_type;
 	FLAC__StreamMetadata *metadata;
 	PyObject *py_picture_type, *py_metadata;
-	char *filename, *mime_type, *description;
+	const char *filename;
+	char *mime_type, *description;
 	unsigned max_width, max_height, max_depth, max_colors;
 	int parsed;
 

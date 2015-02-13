@@ -134,7 +134,7 @@ static int
 flac_MetadataSimpleIterator_init (flac_MetadataSimpleIteratorObject *self, PyObject *args, PyObject *kwds)
 {
 	FLAC__bool read_only, preserve_file_stats;
-	char *filename;
+	const char *filename;
 
 	read_only = preserve_file_stats = true;
 

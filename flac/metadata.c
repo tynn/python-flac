@@ -1404,10 +1404,8 @@ flac_StreamMetadataSeekTable_get_points (PyFLAC_StreamMetadataObject *self, void
 
 			if (!point || PyList_SetItem(list, i, (PyObject *) point) < 0)
 			{
-				Py_XDECREF(point);
-				Py_DECREF(list);
-
-				return NULL;
+				Py_CLEAR(list);
+				break;
 			}
 		}
 
@@ -1543,7 +1541,7 @@ flac_StreamMetadataVorbisCommentEntry_new (PyTypeObject *type, PyObject *args, P
 {
 	FLAC__StreamMetadata_VorbisComment_Entry entry;
 	PyObject *self;
-	char *field_name, *field_value;
+	const char *field_name, *field_value;
 
 	(void)kwds;
 
@@ -1632,7 +1630,7 @@ static PyObject *
 flac_StreamMetadataVorbisCommentEntry_matches (PyObject *self, PyObject *args)
 {
 	FLAC__StreamMetadata_VorbisComment_Entry *entry;
-	char *field_name;
+	const char *field_name;
 
 	if (!PyArg_ParseTuple(args, "s", &field_name))
 		return NULL;
@@ -1838,7 +1836,7 @@ flac_StreamMetadataVorbisComment_delete_comment (PyFLAC_StreamMetadataObject *se
 static PyObject *
 flac_StreamMetadataVorbisComment_find_entry_from (PyFLAC_StreamMetadataObject *self, PyObject *args)
 {
-	char *field_name;
+	const char *field_name;
 	unsigned offset;
 
 	offset = 0;
@@ -1853,7 +1851,7 @@ flac_StreamMetadataVorbisComment_find_entry_from (PyFLAC_StreamMetadataObject *s
 static PyObject *
 flac_StreamMetadataVorbisComment_remove_entry_matching (PyFLAC_StreamMetadataObject *self, PyObject *args)
 {
-	char *field_name;
+	const char *field_name;
 	int result;
 
 	if (!PyArg_ParseTuple(args, "s", &field_name))
@@ -1871,7 +1869,7 @@ flac_StreamMetadataVorbisComment_remove_entry_matching (PyFLAC_StreamMetadataObj
 static PyObject *
 flac_StreamMetadataVorbisComment_remove_entries_matching (PyFLAC_StreamMetadataObject *self, PyObject *args)
 {
-	char *field_name;
+	const char *field_name;
 	int result;
 
 	if (!PyArg_ParseTuple(args, "s", &field_name))
@@ -2101,10 +2099,8 @@ flac_StreamMetadataVorbisComment_get (PyFLAC_StreamMetadataObject *self, void *c
 
 			if (!comment || PyList_SetItem(list, i, comment) < 0)
 			{
-				Py_XDECREF(comment);
-				Py_DECREF(list);
-
-				return NULL;
+				Py_CLEAR(list);
+				break;
 			}
 		}
 
@@ -2757,10 +2753,8 @@ flac_StreamMetadataCueSheetTrack_get_indices (flac_StreamMetadataCueSheetTrackOb
 
 			if (!index || PyList_SetItem(list, i, index) < 0)
 			{
-				Py_XDECREF(index);
-				Py_DECREF(list);
-
-				return NULL;
+				Py_CLEAR(list);
+				break;
 			}
 		}
 
@@ -3171,10 +3165,8 @@ flac_StreamMetadataCueSheet_get_tracks (PyFLAC_StreamMetadataObject *self)
 
 			if (!track || PyList_SetItem(list, i, track) < 0)
 			{
-				Py_XDECREF(track);
-				Py_DECREF(list);
-
-				return NULL;
+				Py_CLEAR(list);
+				break;
 			}
 		}
 

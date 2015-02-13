@@ -12,7 +12,7 @@ Native flac modules
 `flac.metadata` contains the definitions of the metadata objects.  
 `flac.metadata0` contains the level 0 metadata API.  
 `flac.metadata1` contains the level 1 metadata API.  
-`flac.metadata2` will contain the level 1 metadata API.
+`flac.metadata2` will contain the level 2 metadata API.
 
 Python flac modules
 -------------------
