@@ -41,11 +41,11 @@ class EnumTest (unittest.TestCase) :
 
 	def test_equality (self) :
 		for e1 in self._enum :
-			self.assertEqual(e1, e1)
+			self.assertIs(e1, e1)
 
 	def test_inequality (self) :
 		for e1, e2 in self._pairs() :
-			self.assertNotEqual(e1, e2)
+			self.assertIsNot(e1, e2)
 
 	def test_boolvalue (self) :
 		for e1 in self._enum :

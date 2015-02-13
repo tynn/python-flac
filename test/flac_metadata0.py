@@ -35,7 +35,6 @@ def _printt (*tuples) :
 def get_streaminfo (filename) :
 	metadata = flac.get_streaminfo(filename)
 	if metadata :
-		metadata = metadata.data
 		_printt(
 			('min blocksize', metadata.min_blocksize),
 			('max blocksize', metadata.max_blocksize),
@@ -51,13 +50,12 @@ def get_streaminfo (filename) :
 def get_tags (filename) :
 	metadata = flac.get_tags(filename)
 	if metadata :
-		_printt(*map(lambda c : c.to_name_value_pair(), metadata.data.comments))
+		_printt(*map(lambda c : c.to_name_value_pair(), metadata.comments))
 
 def get_cuesheet (filename) :
 	metadata = flac.get_cuesheet(filename)
 	if metadata :
 		_printf('FILE "{0:s}" WAVE', os.path.basename(filename))
-		metadata = metadata.data
 		for track in metadata.tracks :
 			if track.number < 100 :
 				_printf('  TRACK {0:02d} AUDIO', track.number)
@@ -71,7 +69,6 @@ def get_cuesheet (filename) :
 def get_picture (filename, picture_type) :
 	metadata = flac.get_picture(filename, picture_type)
 	if metadata :
-		metadata = metadata.data
 		filename = os.path.splitext(filename)[0] + '.' + str(metadata.type)
 		mime_types = {'image/jpeg': '.jpg', 'image/png': '.png'}
 		if metadata.mime_type in mime_types :
