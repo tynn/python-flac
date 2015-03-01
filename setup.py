@@ -16,7 +16,7 @@
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
 from disttest import Extension, setup
-import test.unit
+import tests
 
 
 def _sources (*files) : return ['flac/' + file for file in files]
@@ -88,6 +88,6 @@ setup(
 			sources = _sources(module + '.c'),
 			depends = _sources('PyFLAC.h', '_C_API.h', *headers[module])
 		) for module in headers],
-	test_suite = test.unit
+	test_suite = tests
 )
 
