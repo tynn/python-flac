@@ -1,6 +1,6 @@
 #	This file is part of python-flac.
 #
-#	Copyright (c) 2014 Christian Schmitz <tynn.dev@gmail.com>
+#	Copyright (c) 2015 Christian Schmitz <tynn.dev@gmail.com>
 #
 #	python-flac is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU Lesser General Public License as published by
@@ -15,8 +15,10 @@
 #	You should have received a copy of the GNU Lesser General Public License
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
-""" libFLAC """
+""" StreamMetadata modules """
 
-from .format import *
-from .stream_metadata import *
+from .metadata import *
+from .metadata0 import *
+from .metadata1 import *
+from .metadata2 import *
 
