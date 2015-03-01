@@ -36,6 +36,10 @@
 #include "_list_of_type.h"
 
 
+#define flac_Iter_New(type,data,data_size,data_host) \
+	PyFLAC_Iter_New(data, data_size, flac_##type##_iternext, PyFLAC_name(type), (PyObject *) data_host)
+
+
 #define PyFLAC_CHECK_metadata_type(metadata_type) \
 	if (metadata_type < 0 || metadata_type >= FLAC__METADATA_TYPE_UNDEFINED) \
 	{ \
@@ -331,7 +335,7 @@ flac_StreamMetadata_dealloc (PyFLAC_StreamMetadataObject *self)
 	if (self->metadata)
 		FLAC__metadata_object_delete(self->metadata);
 	Py_XDECREF(self->metadata_type);
-	PyObject_Del((PyObject *) self);
+	PyObject_Del(self);
 }
 
 
@@ -892,7 +896,7 @@ flac_StreamMetadataSeekPoint_dealloc (flac_StreamMetadataSeekPointObject *self)
 	Py_DECREF(self->sample_number);
 	Py_DECREF(self->stream_offset);
 	Py_DECREF(self->frame_samples);
-	PyObject_Del((PyObject *) self);
+	PyObject_Del(self);
 }
 
 
@@ -1062,6 +1066,13 @@ flac_StreamMetadataSeekPoint_Ready ( void )
 	type->tp_new = flac_StreamMetadataSeekPoint_new;
 
 	return PyType_Ready(type);
+}
+
+
+static PyObject *
+flac_StreamMetadataSeekPoint_iternext (PyObject *iter, const void *data, Py_ssize_t index)
+{
+	return flac_StreamMetadataSeekPoint_new_object(PyFLAC_type(StreamMetadataSeekPoint), ((FLAC__StreamMetadata_SeekPoint *) data)[index]);
 }
 
 
@@ -1389,27 +1400,7 @@ flac_StreamMetadataSeekTable_new (PyTypeObject *type, PyObject *args, PyObject *
 static PyObject *
 flac_StreamMetadataSeekTable_get_points (PyFLAC_StreamMetadataObject *self, void *closure)
 {
-	unsigned num_points, i;
-	PyObject *point;
-	PyObject *list;
-
-	num_points = self->metadata->data.seek_table.num_points;
-
-	list = PyList_New(num_points);
-
-	if (list)
-		for (i = 0; i < num_points; i++)
-		{
-			point = flac_StreamMetadataSeekPoint_new_object(PyFLAC_type(StreamMetadataSeekPoint), self->metadata->data.seek_table.points[i]);
-
-			if (!point || PyList_SetItem(list, i, (PyObject *) point) < 0)
-			{
-				Py_CLEAR(list);
-				break;
-			}
-		}
-
-	return list;
+	return flac_Iter_New(StreamMetadataSeekPoint, self->metadata->data.seek_table.points, self->metadata->data.seek_table.num_points, self);
 }
 
 
@@ -1675,6 +1666,13 @@ flac_StreamMetadataVorbisCommentEntry_Ready ( void )
 	type->tp_new = flac_StreamMetadataVorbisCommentEntry_new;
 
 	return PyType_Ready(type);
+}
+
+
+static PyObject *
+flac_StreamMetadataVorbisCommentEntry_iternext (PyObject *iter, const void *data, Py_ssize_t index)
+{
+	return flac_StreamMetadataVorbisCommentEntry_new_object(PyFLAC_type(StreamMetadataVorbisCommentEntry), &((FLAC__StreamMetadata_VorbisComment_Entry *) data)[index]);
 }
 
 
@@ -2078,33 +2076,13 @@ flac_StreamMetadataVorbisComment_set_comments (PyFLAC_StreamMetadataObject *self
 static PyObject *
 flac_StreamMetadataVorbisComment_get (PyFLAC_StreamMetadataObject *self, void *closure)
 {
-	FLAC__uint32 num_comments, i;
-	PyObject *comment;
-	PyObject *list;
-
 	if (closure == (void *) flac_StreamMetadataVorbisComment_vendor_string)
 		return flac_StreamMetadataVorbisCommentEntry_new_object(PyFLAC_type(StreamMetadataVorbisCommentEntry), &self->metadata->data.vorbis_comment.vendor_string);
 
 	if (closure != (void *) flac_StreamMetadataVorbisComment_comments)
 		return PyFLAC_getter_error(StreamMetadataVorbisComment);
 
-	num_comments = self->metadata->data.vorbis_comment.num_comments;
-
-	list = PyList_New(num_comments);
-
-	if (list)
-		for (i = 0; i < num_comments; i++)
-		{
-			comment = flac_StreamMetadataVorbisCommentEntry_new_object(PyFLAC_type(StreamMetadataVorbisCommentEntry), &self->metadata->data.vorbis_comment.comments[i]);
-
-			if (!comment || PyList_SetItem(list, i, comment) < 0)
-			{
-				Py_CLEAR(list);
-				break;
-			}
-		}
-
-	return list;
+	return flac_Iter_New(StreamMetadataVorbisCommentEntry, self->metadata->data.vorbis_comment.comments, self->metadata->data.vorbis_comment.num_comments, self);
 }
 
 
@@ -2169,7 +2147,7 @@ flac_StreamMetadataCueSheetIndex_dealloc (flac_StreamMetadataCueSheetIndexObject
 {
 	Py_DECREF(self->offset);
 	Py_DECREF(self->number);
-	PyObject_Del((PyObject *) self);
+	PyObject_Del(self);
 }
 
 
@@ -2320,6 +2298,13 @@ flac_StreamMetadataCueSheetIndex_Ready ( void )
 	type->tp_new = flac_StreamMetadataCueSheetIndex_new;
 
 	return PyType_Ready(type);
+}
+
+
+static PyObject *
+flac_StreamMetadataCueSheetIndex_iternext (PyObject *iter, const void *data, Py_ssize_t index)
+{
+	return flac_StreamMetadataCueSheetIndex_new_object(PyFLAC_type(StreamMetadataCueSheetIndex), ((FLAC__StreamMetadata_CueSheet_Index *) data)[index]);
 }
 
 
@@ -2738,27 +2723,7 @@ flac_StreamMetadataCueSheetTrack_get (flac_StreamMetadataCueSheetTrackObject *se
 static PyObject *
 flac_StreamMetadataCueSheetTrack_get_indices (flac_StreamMetadataCueSheetTrackObject *self, void *closure)
 {
-	FLAC__byte num_indices, i;
-	PyObject *index;
-	PyObject *list;
-
-	num_indices = self->data->num_indices;
-
-	list = PyList_New(num_indices);
-
-	if (list)
-		for (i = 0; i < num_indices; i++)
-		{
-			index = flac_StreamMetadataCueSheetIndex_new_object(PyFLAC_type(StreamMetadataCueSheetIndex), self->data->indices[i]);
-
-			if (!index || PyList_SetItem(list, i, index) < 0)
-			{
-				Py_CLEAR(list);
-				break;
-			}
-		}
-
-	return list;
+	return flac_Iter_New(StreamMetadataCueSheetIndex, self->data->indices, self->data->num_indices, self);
 }
 
 
@@ -2911,6 +2876,13 @@ flac_StreamMetadataCueSheetTrack_Ready ( void )
 	type->tp_new = flac_StreamMetadataCueSheetTrack_new;
 
 	return PyType_Ready(type);
+}
+
+
+static PyObject *
+flac_StreamMetadataCueSheetTrack_iternext (PyObject *iter, const void *data, Py_ssize_t index)
+{
+	return flac_StreamMetadataCueSheetTrack_new_object(PyFLAC_type(StreamMetadataCueSheetTrack), &((FLAC__StreamMetadata_CueSheet_Track *) data)[index]);
 }
 
 
@@ -3150,27 +3122,7 @@ flac_StreamMetadataCueSheet_new (PyTypeObject *type, PyObject *args, PyObject *k
 static PyObject *
 flac_StreamMetadataCueSheet_get_tracks (PyFLAC_StreamMetadataObject *self)
 {
-	FLAC__uint32 num_tracks, i;
-	PyObject *track;
-	PyObject *list;
-
-	num_tracks = self->metadata->data.cue_sheet.num_tracks;
-
-	list = PyList_New(num_tracks);
-
-	if (list)
-		for (i = 0; i < num_tracks; i++)
-		{
-			track = flac_StreamMetadataCueSheetTrack_new_object(PyFLAC_type(StreamMetadataCueSheetTrack), &self->metadata->data.cue_sheet.tracks[i]);
-
-			if (!track || PyList_SetItem(list, i, track) < 0)
-			{
-				Py_CLEAR(list);
-				break;
-			}
-		}
-
-	return list;
+	return flac_Iter_New(StreamMetadataCueSheetTrack, self->metadata->data.cue_sheet.tracks, self->metadata->data.cue_sheet.num_tracks, self);
 }
 
 

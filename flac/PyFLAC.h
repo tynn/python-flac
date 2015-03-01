@@ -38,7 +38,10 @@
 
 	#endif // PY_MAJOR_VERSION >= 4
 
+	#define PyInt_Type PyLong_Type
+	#define PyInt_AsLong PyLong_AsLong
 	#define PyInt_FromLong PyLong_FromLong
+	#define PyInt_FromSsize_t PyLong_FromSsize_t
 
 	#define PyStringObject PyUnicodeObject
 	#define PyString_Type PyUnicode_Type
@@ -71,6 +74,8 @@
 
 #define PyFLAC_int(int_value) PyInt_FromLong((long) int_value)
 
+#define PyFLAC_int32(int32_value) PyFLAC_int(int32_value)
+
 #define PyFLAC_string(string_value) PyString_FromString((char *) string_value)
 
 #define PyFLAC_string2(string_value,string_length) PyString_FromStringAndSize((char *) string_value, (Py_ssize_t) string_length)
@@ -84,6 +89,8 @@
 #define PyFLAC_unsigned(unsigned_value) PyLong_FromUnsignedLong((unsigned long) unsigned_value)
 
 #define PyFLAC_uint32(uint32_value) PyFLAC_unsigned(uint32_value)
+
+#define PyFLAC_uint16(uint16_value) PyFLAC_unsigned(uint16_value)
 
 #define PyFLAC_uint8(uint8_value) PyFLAC_unsigned(uint8_value)
 

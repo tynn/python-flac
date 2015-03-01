@@ -36,7 +36,10 @@ class AttrsTest (object) :
 		for attr, value in self._attrs_.items() :
 			setattr(self.obj, attr, value)
 			self.assertRaises(TypeError, setattr, self.obj, attr, _not_a_value)
-			self.assertEqual(getattr(self.obj, attr), value)
+			if type(value) == list :
+				self.assertListEqual(list(getattr(self.obj, attr)), value)
+			else :
+				self.assertEqual(getattr(self.obj, attr), value)
 		obj = self._class_(**self._attrs_)
 		self.assertEqual(self.obj, obj)
 
@@ -93,34 +96,34 @@ class FlacStreamMetadataSeekTableTest (MetadataTest, unittest.TestCase) :
 
 	def test_resize_points (self) :
 		self.assertTrue(self.obj.resize_points(11))
-		self.assertEqual(len(self.obj.points), 11)
+		self.assertEqual(len(list(self.obj.points)), 11)
 
 	def test_set_point (self) :
 		points = self._attrs_['points'][:]
 		self.obj.points = points
 		self.assertRaises(IndexError, self.obj.set_point,
-							len(self.obj.points), self.point)
+							len(list(self.obj.points)), self.point)
 		self.assertTrue(self.obj.set_point(1, self.point))
 		points[1] = self.point
-		self.assertEqual(self.obj.points, points)
+		self.assertListEqual(list(self.obj.points), points)
 
 	def test_get_point (self) :
 		self.obj.points = self._attrs_['points']
-		self.assertRaises(IndexError, self.obj.get_point, len(self.obj.points))
+		self.assertRaises(IndexError, self.obj.get_point, len(list(self.obj.points)))
 		self.assertEqual(self.obj.get_point(1), self._attrs_['points'][1])
 
 	def test_insert_point (self) :
 		self.obj.points = self._attrs_['points']
 		self.assertRaises(IndexError, self.obj.insert_point,
-							len(self.obj.points) + 3, self.point)
+							len(list(self.obj.points)) + 3, self.point)
 		self.assertTrue(self.obj.insert_point(2, self.point))
-		self.assertEqual(self.obj.points, self._attrs_['points'] + [self.point])
+		self.assertListEqual(list(self.obj.points), self._attrs_['points'] + [self.point])
 
 	def test_delete_point (self) :
 		self.obj.points = self._attrs_['points']
-		self.assertRaises(IndexError, self.obj.delete_point, len(self.obj.points))
+		self.assertRaises(IndexError, self.obj.delete_point, len(list(self.obj.points)))
 		self.assertTrue(self.obj.delete_point(1))
-		self.assertEqual(self.obj.points, self._attrs_['points'][:1])
+		self.assertListEqual(list(self.obj.points), self._attrs_['points'][:1])
 
 	def test_is_legal (self) :
 		self.assertTrue(self.obj.is_legal())
@@ -131,33 +134,33 @@ class FlacStreamMetadataSeekTableTest (MetadataTest, unittest.TestCase) :
 
 	def test_template_append_placeholders (self) :
 		self.assertTrue(self.obj.template_append_placeholders(5))
-		self.assertEqual(len(self.obj.points), 5)
+		self.assertEqual(len(list(self.obj.points)), 5)
 
 	def test_template_append_point (self) :
 		self.assertTrue(self.obj.template_append_point(1))
-		self.assertEqual(self.obj.points, [self.point])
+		self.assertListEqual(list(self.obj.points), [self.point])
 
 	def test_template_append_points (self) :
 		points = [StreamMetadataSeekPoint(i) for i in range(1, 5)]
 		self.assertTrue(self.obj.template_append_points(*range(1, 5)))
-		self.assertEqual(self.obj.points, points)
+		self.assertListEqual(list(self.obj.points), points)
 		self.assertTrue(self.obj.template_append_points(list(range(1, 5))))
-		self.assertEqual(self.obj.points, 2 * points)
+		self.assertListEqual(list(self.obj.points), 2 * points)
 
 	def test_template_append_spaced_points (self) :
 		self.assertTrue(self.obj.template_append_spaced_points(3, 12))
-		self.assertEqual(self.obj.points,
+		self.assertListEqual(list(self.obj.points),
 					[StreamMetadataSeekPoint(i) for i in range(0, 12, 4)])
 
 	def test_template_append_spaced_points_by_samples (self) :
 		self.assertTrue(self.obj.template_append_spaced_points_by_samples(4, 12))
-		self.assertEqual(self.obj.points,
+		self.assertListEqual(list(self.obj.points),
 					[StreamMetadataSeekPoint(i) for i in range(0, 12, 4)])
 
 	def test_template_sort (self) :
 		self.obj.points = self._attrs_['points']
 		self.obj.template_sort()
-		self.assertEqual(self.obj.points, list(reversed(self._attrs_['points'])))
+		self.assertListEqual(list(self.obj.points), list(reversed(self._attrs_['points'])))
 
 
 class FlacStreamMetadataVorbisCommentTest (MetadataTest, unittest.TestCase) :
@@ -176,29 +179,29 @@ class FlacStreamMetadataVorbisCommentTest (MetadataTest, unittest.TestCase) :
 	def test_resize_comments (self) :
 		self.obj.comments = self._attrs_['comments']
 		self.assertTrue(self.obj.resize_comments(13))
-		self.assertEqual(len(self.obj.comments), 13)
+		self.assertEqual(len(list(self.obj.comments)), 13)
 
 	def test_set_comment (self) :
 		self.assertRaises(IndexError, self.obj.set_comment,
-							len(self.obj.comments), self.comment)
+							len(list(self.obj.comments)), self.comment)
 		self.obj.comments = self._attrs_['comments']
 		self.assertTrue(self.obj.set_comment(1, self.comment))
-		self.assertListEqual(self.obj.comments, [
+		self.assertListEqual(list(self.obj.comments), [
 				self._attrs_['comments'][0],
 				self.comment
 			])
 
 	def test_get_comment (self) :
 		self.obj.comments = self._attrs_['comments']
-		self.assertRaises(IndexError, self.obj.get_comment, len(self.obj.comments))
+		self.assertRaises(IndexError, self.obj.get_comment, len(list(self.obj.comments)))
 		self.assertEqual(self.obj.get_comment(1), self._attrs_['comments'][1])
 
 	def test_insert_comment (self) :
 		self.assertRaises(IndexError, self.obj.insert_comment,
-							len(self.obj.comments) + 3, self.comment)
+							len(list(self.obj.comments)) + 3, self.comment)
 		self.obj.comments = self._attrs_['comments']
 		self.assertTrue(self.obj.insert_comment(1, self.comment))
-		self.assertListEqual(self.obj.comments, [
+		self.assertListEqual(list(self.obj.comments), [
 				self._attrs_['comments'][0],
 				self.comment,
 				self._attrs_['comments'][1]
@@ -207,7 +210,7 @@ class FlacStreamMetadataVorbisCommentTest (MetadataTest, unittest.TestCase) :
 	def test_append_comment (self) :
 		self.obj.comments = self._attrs_['comments']
 		self.assertTrue(self.obj.append_comment(self.comment))
-		self.assertListEqual(self.obj.comments, self._attrs_['comments'] + [self.comment])
+		self.assertListEqual(list(self.obj.comments), self._attrs_['comments'] + [self.comment])
 
 	def test_replace_comment (self) :
 		comments = self._attrs_['comments'] + self._attrs_['comments']
@@ -215,17 +218,17 @@ class FlacStreamMetadataVorbisCommentTest (MetadataTest, unittest.TestCase) :
 		comment = StreamMetadataVorbisCommentEntry("ALBUM", "Something")
 		self.assertTrue(self.obj.replace_comment(comment, False))
 		comments[1] = comment
-		self.assertListEqual(self.obj.comments, comments)
+		self.assertListEqual(list(self.obj.comments), comments)
 		self.assertTrue(self.obj.replace_comment(comments[3], True))
 		comments[1] = comments[3]
 		del comments[3]
-		self.assertListEqual(self.obj.comments, comments)
+		self.assertListEqual(list(self.obj.comments), comments)
 
 	def test_delete_comment (self) :
-		self.assertRaises(IndexError, self.obj.delete_comment, len(self.obj.comments))
+		self.assertRaises(IndexError, self.obj.delete_comment, len(list(self.obj.comments)))
 		self.obj.comments = self._attrs_['comments']
 		self.assertTrue(self.obj.delete_comment(1))
-		self.assertListEqual(self.obj.comments, self._attrs_['comments'][:1])
+		self.assertListEqual(list(self.obj.comments), self._attrs_['comments'][:1])
 
 	def test_find_entry_from (self) :
 		self.obj.comments = self._attrs_['comments'] + self._attrs_['comments']
@@ -240,14 +243,14 @@ class FlacStreamMetadataVorbisCommentTest (MetadataTest, unittest.TestCase) :
 		self.assertFalse(self.obj.remove_entry_matching("FOOBAR"))
 		field_name = self._attrs_['comments'][1].to_name_value_pair()[0]
 		self.assertTrue(self.obj.remove_entry_matching(field_name))
-		self.assertEqual(self.obj.comments, [self._attrs_['comments'][0]])
+		self.assertListEqual(list(self.obj.comments), [self._attrs_['comments'][0]])
 
 	def test_remove_entries_matching (self) :
 		self.obj.comments = self._attrs_['comments'] + self._attrs_['comments']
 		self.assertEqual(self.obj.remove_entries_matching("FOOBAR"), 0)
 		field_name = self._attrs_['comments'][1].to_name_value_pair()[0]
 		self.assertEqual(self.obj.remove_entries_matching(field_name), 2)
-		self.assertEqual(self.obj.comments, [self._attrs_['comments'][0]] * 2)
+		self.assertListEqual(list(self.obj.comments), [self._attrs_['comments'][0]] * 2)
 
 
 class FlacStreamMetadataCueSheetTest (MetadataTest, unittest.TestCase) :
@@ -269,83 +272,84 @@ class FlacStreamMetadataCueSheetTest (MetadataTest, unittest.TestCase) :
 	def test_track_resize_indices (self) :
 		self.obj.tracks = self.track
 		self.assertTrue(self.obj.track_resize_indices(0, 3))
-		self.assertEqual(len(self.obj.tracks[0].indices), 3)
+		self.assertEqual(len(list(list(self.obj.tracks)[0].indices)), 3)
 
 	def test_track_set_index (self) :
 		self.track.indices = self.index
 		self.obj.tracks = self.track
 		self.assertRaises(IndexError, self.obj.track_set_index,
-							0, len(self.obj.tracks[0].indices), self.index)
+							0, len(list(list(self.obj.tracks)[0].indices)), self.index)
 		index = StreamMetadataCueSheetIndex(1, 3)
 		self.assertTrue(self.obj.track_set_index(0, 0, index))
-		self.assertEqual(self.obj.tracks[0].indices, [index])
+		self.assertListEqual(list(list(self.obj.tracks)[0].indices), [index])
 
 	def test_track_get_index (self) :
 		self.track.indices = self.index, self.index
 		self.obj.tracks = self.track
 		self.assertRaises(IndexError, self.obj.track_get_index,
-							0, len(self.obj.tracks[0].indices))
+							0, len(list(list(self.obj.tracks)[0].indices)))
 		self.assertEqual(self.obj.track_get_index(0, 1), self.index)
 
 	def test_track_insert_index (self) :
 		self.obj.tracks = self.track
 		self.assertRaises(IndexError, self.obj.track_insert_index,
-							0, len(self.obj.tracks[0].indices) + 3, self.index)
+							0, len(list(list(self.obj.tracks)[0].indices)) + 3, self.index)
 		self.assertTrue(self.obj.track_insert_index(0, 0, self.index))
-		self.assertEqual(self.obj.tracks[0].indices, [self.index] + self.track.indices)
+		self.assertListEqual(list(list(self.obj.tracks)[0].indices),
+				[self.index] + list(self.track.indices))
 
 	def test_track_insert_blank_index (self) :
 		self.obj.tracks = self.track
 		self.assertRaises(IndexError, self.obj.track_insert_blank_index,
-							0, len(self.obj.tracks[0].indices) + 3)
+							0, len(list(list(self.obj.tracks)[0].indices)) + 3)
 		self.assertTrue(self.obj.track_insert_blank_index(0, 0))
-		self.assertEqual(self.obj.tracks[0].indices,
-				[StreamMetadataCueSheetIndex()] + self.track.indices)
+		self.assertListEqual(list(list(self.obj.tracks)[0].indices),
+				[StreamMetadataCueSheetIndex()] + list(self.track.indices))
 
 	def test_track_delete_index (self) :
 		self.track.indices = [self.index, self.index]
 		self.obj.tracks = self.track
 		self.assertRaises(IndexError, self.obj.track_delete_index,
-							0, len(self.obj.tracks[0].indices))
+							0, len(list(list(self.obj.tracks)[0].indices)))
 		self.assertTrue(self.obj.track_delete_index(0, 1))
-		self.assertEqual(self.obj.tracks[0].indices, [self.index])
+		self.assertListEqual(list(list(self.obj.tracks)[0].indices), [self.index])
 
 	def test_resize_tracks (self) :
 		self.assertTrue(self.obj.resize_tracks(7))
-		self.assertEqual(len(self.obj.tracks), 7)
+		self.assertEqual(len(list(self.obj.tracks)), 7)
 
 	def test_set_track (self) :
 		self.assertRaises(IndexError, self.obj.set_track,
-							len(self.obj.tracks), self.track)
+							len(list(self.obj.tracks)), self.track)
 		track = StreamMetadataCueSheetTrack(1)
 		self.obj.tracks = track, StreamMetadataCueSheetTrack(2)
 		self.assertTrue(self.obj.set_track(1, self.track))
-		self.assertEqual(self.obj.tracks, [track, self.track])
+		self.assertListEqual(list(self.obj.tracks), [track, self.track])
 
 	def test_get_track (self) :
 		self.obj.tracks = self._attrs_['tracks']
-		self.assertRaises(IndexError, self.obj.get_track, len(self.obj.tracks))
+		self.assertRaises(IndexError, self.obj.get_track, len(list(self.obj.tracks)))
 		self.assertEqual(self.obj.get_track(1), self._attrs_['tracks'][1])
 
 	def test_insert_track (self) :
 		self.assertRaises(IndexError, self.obj.insert_track,
-							len(self.obj.tracks) + 3, self.track)
+							len(list(self.obj.tracks)) + 3, self.track)
 		self.assertTrue(self.obj.insert_track(0, self.track))
-		self.assertEqual(self.obj.tracks, [self.track])
+		self.assertListEqual(list(self.obj.tracks), [self.track])
 
 	def test_insert_blank_track (self) :
 		self.assertRaises(IndexError, self.obj.insert_blank_track,
-							len(self.obj.tracks) + 3)
+							len(list(self.obj.tracks)) + 3)
 		self.assertTrue(self.obj.insert_blank_track(0))
-		self.assertEqual(self.obj.tracks, [StreamMetadataCueSheetTrack()])
+		self.assertListEqual(list(self.obj.tracks), [StreamMetadataCueSheetTrack()])
 
 	def test_delete_track (self) :
 		self.assertRaises(IndexError, self.obj.delete_track,
-							len(self.obj.tracks) + 3)
+							len(list(self.obj.tracks)) + 3)
 		track = StreamMetadataCueSheetTrack(1)
 		self.obj.tracks = track, self.track
 		self.assertTrue(self.obj.delete_track(1))
-		self.assertEqual(self.obj.tracks, [track])
+		self.assertListEqual(list(self.obj.tracks), [track])
 
 	def test_is_legal (self) :
 		self.assertFalse(self.obj.is_legal(False))
@@ -479,42 +483,42 @@ class FlacStreamMetadataCueSheetTrackTest (AttrsTest, unittest.TestCase) :
 
 	def test_resize_indices (self) :
 		self.assertTrue(self.obj.resize_indices(9))
-		self.assertEqual(len(self.obj.indices), 9)
+		self.assertEqual(len(list(self.obj.indices)), 9)
 
 	def test_set_index (self) :
 		index = StreamMetadataCueSheetIndex(2, 2)
 		self.assertRaises(IndexError, self.obj.set_index,
-							len(self.obj.indices), index)
+							len(list(self.obj.indices)), index)
 		self.assertTrue(self.obj.set_index(1, index))
-		self.assertEqual(self.obj.indices, [self._attrs_['indices'][0], index])
+		self.assertListEqual(list(self.obj.indices), [self._attrs_['indices'][0], index])
 
 	def test_get_index (self) :
 		self.obj.indices = self._attrs_['indices']
-		self.assertRaises(IndexError, self.obj.get_index, len(self.obj.indices))
+		self.assertRaises(IndexError, self.obj.get_index, len(list(self.obj.indices)))
 		self.assertEqual(self.obj.get_index(1), self._attrs_['indices'][1])
 
 	def test_insert_index (self) :
 		index = StreamMetadataCueSheetIndex(2, 2)
 		self.assertRaises(IndexError, self.obj.insert_index,
-							len(self.obj.indices) + 3, index)
+							len(list(self.obj.indices)) + 3, index)
 		self.assertTrue(self.obj.insert_index(1, index))
 		indices = self._attrs_['indices'][:]
 		indices.insert(1, index)
-		self.assertEqual(self.obj.indices, indices)
+		self.assertListEqual(list(self.obj.indices), indices)
 
 	def test_insert_blank_index (self) :
 		self.assertRaises(IndexError, self.obj.insert_blank_index,
-							len(self.obj.indices) + 3)
+							len(list(self.obj.indices)) + 3)
 		self.assertTrue(self.obj.insert_blank_index(1))
 		indices = self._attrs_['indices'][:]
 		indices.insert(1, StreamMetadataCueSheetIndex())
-		self.assertEqual(self.obj.indices, indices)
+		self.assertListEqual(list(self.obj.indices), indices)
 
 	def test_delete_index (self) :
 		self.assertRaises(IndexError, self.obj.delete_index,
-							len(self.obj.indices))
+							len(list(self.obj.indices)))
 		self.assertTrue(self.obj.delete_index(1))
-		self.assertEqual(self.obj.indices, [self._attrs_['indices'][0]])
+		self.assertListEqual(list(self.obj.indices), [self._attrs_['indices'][0]])
 
 
 def load_tests(loader, tests, pattern):

@@ -26,6 +26,9 @@
 extern "C" {
 #endif // __cplusplus
 
+typedef PyObject * (* PyFLAC_Iter_Next) (PyObject *, const void *, Py_ssize_t);
+
+
 #include "enum.h"
 
 #include "_C_API.h"
@@ -44,10 +47,12 @@ extern "C" {
 #define			_FrameNumberType_FromEnum_							 9
 #define			_MetadataType_FromEnum_								10
 
+#define			_Iter_New_											11
+
 
 #ifdef __PyFLAC_format_MODULE__
 
-PyFLAC__C_API_DEF(11)
+PyFLAC__C_API_DEF(12)
 #define _c_api_init { \
 	PyFLAC_type_PUT(EntropyCodingMethodType,_EntropyCodingMethodType_type_) \
 	PyFLAC_type_PUT(SubframeType,_SubframeType_type_) \
@@ -60,6 +65,7 @@ PyFLAC__C_API_DEF(11)
 	PyFLAC_Enum_FromEnum_PUT(ChannelAssignment,_ChannelAssignment_FromEnum_) \
 	PyFLAC_Enum_FromEnum_PUT(FrameNumberType,_FrameNumberType_FromEnum_) \
 	PyFLAC_Enum_FromEnum_PUT(MetadataType,_MetadataType_FromEnum_) \
+	PyFLAC__C_API_PUT(_Iter_New_,PyFLAC_Iter_New) \
 	PyFLAC__C_API_INIT(format) \
 	PyFLAC__C_API_CHECK \
 }
@@ -69,6 +75,8 @@ PyFLAC_Enum_FromEnum_DEF(SubframeType);
 PyFLAC_Enum_FromEnum_DEF(ChannelAssignment);
 PyFLAC_Enum_FromEnum_DEF(FrameNumberType);
 PyFLAC_Enum_FromEnum_DEF(MetadataType);
+
+static PyObject * PyFLAC_Iter_New (const void *, Py_ssize_t, PyFLAC_Iter_Next, const char *, PyObject *);
 
 static PyObject *flac_FlacFormatErrorType;
 #define PyFLAC_FlacFormatErrorType (*flac_FlacFormatErrorType)
@@ -101,6 +109,9 @@ PyFLAC__C_API(format)
 	PyFLAC_Enum_FromEnum_API(format,_FrameNumberType_FromEnum_)
 #define PyFLAC_MetadataType_FromEnum \
 	PyFLAC_Enum_FromEnum_API(format,_MetadataType_FromEnum_)
+
+#define PyFLAC_Iter_New \
+	(*(PyObject * (*)(const void *, Py_ssize_t, PyFLAC_Iter_Next, const char *, PyObject *)) PyFLAC_API(format)[_Iter_New_])
 
 #endif // __PyFLAC_format_MODULE__
 

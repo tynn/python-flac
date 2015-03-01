@@ -149,6 +149,94 @@ PyFLAC_Enum_FromEnum_function(FrameNumberType, enum_member_FrameNumberType)
 PyFLAC_Enum_FromEnum_function(MetadataType, enum_member_MetadataType)
 
 
+struct flac_IterObject {
+	PyObject_HEAD
+	PyObject *data_host;
+	Py_ssize_t data_size;
+	Py_ssize_t index;
+	const void *data;
+	PyFLAC_Iter_Next iternext;
+	const char* type;
+};
+
+
+static void
+flac_Iter_dealloc (struct flac_IterObject *self)
+{
+	Py_XDECREF(self->data_host);
+	PyObject_Del(self);
+}
+
+
+static PyObject *
+flac_Iter_repr (PyObject *self)
+{
+	return PyString_FromFormat("<%s of %s at %p>", Py_TYPE(self)->tp_name, ((struct flac_IterObject *) self)->type, self);
+}
+
+
+static PyObject *
+flac_Iter_next (struct flac_IterObject *self)
+{
+	if (self->index >= self->data_size)
+		return NULL;
+
+	return self->iternext((PyObject *) self, self->data, self->index++);
+}
+
+
+static PyObject *
+flac_Iter_len (struct flac_IterObject *self)
+{
+	return PyInt_FromSsize_t(self->data_size);
+}
+
+
+static PyMethodDef flac_Iter_methods[] = {
+	{
+		"__length_hint__",
+		(PyCFunction) flac_Iter_len,
+		METH_NOARGS,
+		"Private method returning (an estimate of) len(list(it))."
+	}, { NULL }		/* Sentinel */
+};
+
+
+static PyTypeObject flac_IterType = {
+	PyVarObject_HEAD_INIT(NULL,0)
+	PyFLAC_name(Iter),
+	sizeof(struct flac_IterObject), 0,
+	(destructor) flac_Iter_dealloc,
+	0, 0, 0, 0, (reprfunc) flac_Iter_repr,
+	0, 0, 0, 0, 0, 0, 0, 0, 0,
+	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
+	"Generic iterator", 0, 0, 0, 0,
+	PyObject_SelfIter, (iternextfunc) flac_Iter_next,
+	flac_Iter_methods, 0, 0, 0, 0, 0, 0
+};
+
+
+static PyObject *
+PyFLAC_Iter_New (const void *data, Py_ssize_t data_size, PyFLAC_Iter_Next iternext, const char *type, PyObject *data_host)
+{
+	struct flac_IterObject *self;
+
+	self = PyObject_New(struct flac_IterObject, &flac_IterType);
+	if (!self)
+		return NULL;
+
+	Py_INCREF(data_host);
+	self->data_host = data_host;
+	self->iternext = iternext;
+	self->data_size = data_size;
+	self->data = data;
+	self->index = 0;
+	self->type = type;
+
+	return (PyObject *) self;
+}
+
+
 static int
 flac_format_init (void)
 {
@@ -161,6 +249,8 @@ flac_format_init (void)
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(ChannelAssignment), enum_member_ChannelAssignment));
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(FrameNumberType), enum_member_FrameNumberType));
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(MetadataType), enum_member_MetadataType));
+
+	PyFLAC_CHECK_status(PyType_Ready(&flac_IterType));
 
 	_c_api_init
 
