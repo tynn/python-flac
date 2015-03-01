@@ -29,14 +29,6 @@
 #define PyFLAC_CHECK_initialized(self) PyFLAC_CHECK(!(self->init),(PyFLAC_RuntimeError("iterator not initialized"), NULL))
 
 
-static PyObject *
-flac_return_self (PyObject *self)
-{
-	Py_INCREF(self);
-	return self;
-}
-
-
 typedef struct {
 	PyObject_HEAD
 	FLAC__Metadata_SimpleIterator *iterator;
@@ -156,7 +148,7 @@ flac_MetadataSimpleIterator_dealloc (flac_MetadataSimpleIteratorObject *self)
 {
 	if (self->iterator)
 		FLAC__metadata_simple_iterator_delete(self->iterator);
-	Py_TYPE(self)->tp_free((PyObject *) self);
+	PyObject_Del(self);
 }
 
 
@@ -378,7 +370,9 @@ flac_MetadataSimpleIterator_reset (flac_MetadataSimpleIteratorObject *self)
 		return NULL;
 
 	self->next = false;
-	return flac_return_self((PyObject *) self);
+
+	Py_INCREF(self);
+	return (PyObject *) self;
 }
 
 
@@ -470,7 +464,7 @@ static void
 flac_MetadataSimpleIteratorIter_dealloc (flac_MetadataSimpleIteratorIterObject *self)
 {
 	Py_XDECREF(self->parent);
-	Py_TYPE(self)->tp_free((PyObject *) self);
+	PyObject_Del(self);
 }
 
 
@@ -500,7 +494,7 @@ flac_MetadataSimpleIteratorIter_Ready ( void )
 	type->tp_dealloc = (destructor) flac_MetadataSimpleIteratorIter_dealloc;
 	type->tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER;
 	type->tp_doc = "FLAC MetadataSimpleIterator iterable";
-	type->tp_iter = (getiterfunc) flac_return_self;
+	type->tp_iter = PyObject_SelfIter;
 	type->tp_iternext = (iternextfunc) flac_MetadataSimpleIterator_get_next_block;
 	type->tp_dict = NULL;
 
@@ -539,7 +533,7 @@ flac_MetadataSimpleIterator_Ready ( void )
 	type->tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER;
 	type->tp_doc = "FLAC MetadataSimpleIterator";
 #ifdef __PyFLAC3__
-	type->tp_iter = (getiterfunc) flac_return_self;
+	type->tp_iter = PyObject_SelfIter;
 	type->tp_iternext = (iternextfunc) flac_MetadataSimpleIterator_get_next_block;
 #else // __PyFLAC3__
 	type->tp_iter = (getiterfunc) flac_MetadataSimpleIterator_iter;
