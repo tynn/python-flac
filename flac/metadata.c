@@ -183,7 +183,7 @@ flac_list_of_bytes (PyObject *data, FLAC__byte **ret_bytes, Py_ssize_t *ret_leng
 		return 0;
 	}
 
-	memcpy(bytes, _bytes, length);
+	Py_MEMCPY(bytes, _bytes, length);
 
 	*ret_bytes = bytes;
 	*ret_length = length;
@@ -650,7 +650,7 @@ flac_StreamMetadataStreamInfo_set_md5sum (PyFLAC_StreamMetadataObject *self, PyO
 		return -1;
 	}
 
-	memcpy(self->metadata->data.stream_info.md5sum, md5sum, 16);
+	Py_MEMCPY(self->metadata->data.stream_info.md5sum, md5sum, 16);
 	return 0;
 }
 
@@ -1230,7 +1230,7 @@ flac_StreamMetadataSeekTable_template_append_points (PyFLAC_StreamMetadataObject
 	if (num == -1)
 		return NULL;
 
-	sample_numbers = (FLAC__uint64 *) PyMem_Malloc(num * sizeof(FLAC__uint64));
+	sample_numbers = PyMem_New(FLAC__uint64, num);
 	if (!sample_numbers)
 		return PyErr_NoMemory();
 
@@ -1243,17 +1243,17 @@ flac_StreamMetadataSeekTable_template_append_points (PyFLAC_StreamMetadataObject
 
 	if (i != num)
 	{
-		PyMem_Free(sample_numbers);
+		PyMem_Del(sample_numbers);
 		return NULL;
 	}
 
 	if (!FLAC__metadata_object_seektable_template_append_points(self->metadata, sample_numbers, (unsigned) num))
 	{
-		PyMem_Free(sample_numbers);
+		PyMem_Del(sample_numbers);
 		return PyErr_NoMemory();
 	}
 
-	PyMem_Free(sample_numbers);
+	PyMem_Del(sample_numbers);
 	Py_RETURN_TRUE;
 }
 
@@ -1485,7 +1485,7 @@ flac_StreamMetadataVorbisCommentEntry_dealloc (PyObject *self)
 
 	entry = flac_StreamMetadataVorbisCommentEntry_entry(self);
 	if (entry->entry)
-		free(entry->entry);
+		PyMem_Del(entry->entry);
 
 	PyString_Type.tp_dealloc(self);
 }
@@ -1506,7 +1506,7 @@ flac_StreamMetadataVorbisCommentEntry_new_object (PyTypeObject *type, FLAC__Stre
 
 		if (entry->entry)
 		{
-			self_entry->entry = (FLAC__byte *) malloc(entry->length * sizeof(FLAC__byte) + 1);
+			self_entry->entry = PyMem_New(FLAC__byte, entry->length + 1);
 
 			if (!self_entry->entry)
 			{
@@ -1514,7 +1514,7 @@ flac_StreamMetadataVorbisCommentEntry_new_object (PyTypeObject *type, FLAC__Stre
 				return PyErr_NoMemory();
 			}
 
-			memcpy(self_entry->entry, entry->entry, entry->length);
+			Py_MEMCPY(self_entry->entry, entry->entry, entry->length);
 			self_entry->entry[entry->length] = '\0';
 		}
 		else
@@ -1563,18 +1563,18 @@ flac_StreamMetadataVorbisCommentEntry_new (PyTypeObject *type, PyObject *args, P
 	else
 	{
 		entry.length = strlen(field_name);
-		entry.entry = (FLAC__byte *) malloc(entry.length * sizeof(FLAC__byte) + 1);
+		entry.entry = PyMem_New(FLAC__byte, entry.length + 1);
 
 		if (!entry.entry)
 			return PyErr_NoMemory();
 
-		memcpy(entry.entry, field_name, entry.length);
+		Py_MEMCPY(entry.entry, field_name, entry.length);
 		entry.entry[entry.length] = '\0';
 	}
 
 	self = flac_StreamMetadataVorbisCommentEntry_new_object(type, &entry);
 
-	free(entry.entry);
+	PyMem_Del(entry.entry);
 
 	return self;
 }
@@ -2376,7 +2376,7 @@ flac_StreamMetadataCueSheetTrack_copy_isrc (FLAC__StreamMetadata_CueSheet_Track 
 		case 0:
 			isrc = "\0\0\0\0\0\0\0\0\0\0\0\0";
 		case 12:
-			memcpy(&data->isrc, isrc, 12);
+			Py_MEMCPY(&data->isrc, isrc, 12);
 			return 0;
 		default:
 			PyErr_SetString(PyExc_ValueError, "isrc must be of length 0 or 12");
@@ -3192,7 +3192,7 @@ flac_StreamMetadataCueSheet_set_media_catalog_number (PyFLAC_StreamMetadataObjec
 		return -1;
 	}
 
-	memcpy(self->metadata->data.cue_sheet.media_catalog_number, media_catalog_number_cpy, 129);
+	Py_MEMCPY(self->metadata->data.cue_sheet.media_catalog_number, media_catalog_number_cpy, 129);
 	return 0;
 }
 

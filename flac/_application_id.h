@@ -54,7 +54,7 @@ _application_id (PyObject *obj, void *addr)
 		case 2:
 			return 0;
 		default:
-			memcpy(addr, bytes, 4);
+			Py_MEMCPY(addr, bytes, 4);
 			return 1;
 	}
 }

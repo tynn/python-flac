@@ -38,7 +38,7 @@ _uintX (PyObject *obj, void *addr, size_t size)
 
 	if (l >= 0 && ((unsigned PY_LONG_LONG) l) <= MAX)
 	{
-		memcpy(addr, &l, size);
+		Py_MEMCPY(addr, &l, size);
 		return 1;
 	}
 
@@ -61,7 +61,7 @@ _uintX (PyObject *obj, void *addr, size_t size)
 			}
 			else
 			{
-				memcpy(addr, &l, size);
+				Py_MEMCPY(addr, &l, size);
 				return 1;
 			}
 		}

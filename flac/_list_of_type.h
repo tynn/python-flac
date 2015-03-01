@@ -27,7 +27,7 @@ flac_free_list_of_type (PyObject **list, Py_ssize_t count)
 	{
 		while (count--)
 			Py_DECREF(list[count]);
-		PyMem_Free(list);
+		PyMem_Del(list);
 	}
 }
 
@@ -60,7 +60,7 @@ flac_list_of_type (PyObject *object, PyTypeObject *type, PyObject ***ret_list, P
 			return 1;
 		}
 
-		list = (PyObject **) PyMem_Malloc(count * sizeof(PyObject *));
+		list = PyMem_New(PyObject *, count);
 		if (!list)
 		{
 			PyErr_NoMemory();
