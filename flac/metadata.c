@@ -28,7 +28,7 @@
 
 #include "_application_id.h"
 #include "_bool.h"
-#include "_byte.h"
+#include "_uint8.h"
 #include "_uint32.h"
 #include "_uint64.h"
 #include "_unsigned.h"

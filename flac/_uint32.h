@@ -21,7 +21,7 @@
 #define ___uint32_h__
 
 #include "_uintX.h"
-PyFLAC_uintX(uint32,sizeof(uint32_t))
+PyFLAC_uintX(uint32,uint32_t)
 
 #endif // ___uint32_h__
 

@@ -21,7 +21,7 @@
 #define ___uint8_h__
 
 #include "_uintX.h"
-PyFLAC_uintX(uint8,sizeof(uint8_t))
+PyFLAC_uintX(uint8,uint8_t)
 #define _byte _uint8
 
 #endif // ___uint8_h__

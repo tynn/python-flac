@@ -21,7 +21,7 @@
 #define ___application_id_h__
 
 static int
-_application_id (PyObject *obj, void *addr)
+_application_id (PyObject *obj, FLAC__byte (*id)[4])
 {
 	Py_ssize_t length;
 	char *bytes;
@@ -54,7 +54,10 @@ _application_id (PyObject *obj, void *addr)
 		case 2:
 			return 0;
 		default:
-			Py_MEMCPY(addr, bytes, 4);
+			(*id)[0] = bytes[0];
+			(*id)[1] = bytes[1];
+			(*id)[2] = bytes[2];
+			(*id)[3] = bytes[3];
 			return 1;
 	}
 }

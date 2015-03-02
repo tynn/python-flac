@@ -21,7 +21,7 @@
 #define ___unsigned_h__
 
 #include "_uintX.h"
-PyFLAC_uintX(unsigned,sizeof(unsigned))
+PyFLAC_uintX(unsigned,unsigned)
 
 #endif // ___unsigned_h__
 

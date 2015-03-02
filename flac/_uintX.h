@@ -18,16 +18,20 @@
  */
 
 #ifndef PyFLAC_uintX
-#define PyFLAC_uintX(type,size) \
+#define PyFLAC_uintX(type,TYPE) \
 static int \
-_##type (PyObject *obj, void *addr) \
+_##type (PyObject *obj, TYPE *v) \
 { \
-	return _uintX(obj, addr, size); \
+	unsigned PY_LONG_LONG l; \
+	if (!_uintX(obj, &l, sizeof(TYPE))) \
+		return 0; \
+	*v = (TYPE) l; \
+	return 1; \
 }
 
 
 static int
-_uintX (PyObject *obj, void *addr, size_t size)
+_uintX (PyObject *obj, unsigned PY_LONG_LONG *value, size_t size)
 {
 	PY_LONG_LONG l;
 	int overflow;
@@ -38,7 +42,7 @@ _uintX (PyObject *obj, void *addr, size_t size)
 
 	if (l >= 0 && ((unsigned PY_LONG_LONG) l) <= MAX)
 	{
-		Py_MEMCPY(addr, &l, size);
+		*value = (unsigned PY_LONG_LONG) l;
 		return 1;
 	}
 
@@ -61,7 +65,7 @@ _uintX (PyObject *obj, void *addr, size_t size)
 			}
 			else
 			{
-				Py_MEMCPY(addr, &l, size);
+				*value = (unsigned PY_LONG_LONG) l;
 				return 1;
 			}
 		}

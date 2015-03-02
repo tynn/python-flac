@@ -34,7 +34,6 @@ headers = {
 			'metadata.h',
 			'_application_id.h',
 			'_bool.h',
-			'_byte.h',
 			'_enum.h',
 			'_list_of_type.h',
 			'_uintX.h',

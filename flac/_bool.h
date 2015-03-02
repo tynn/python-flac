@@ -21,9 +21,8 @@
 #define ___bool_h__
 
 static int
-_bool (PyObject *obj, void *addr)
+_bool (PyObject *obj, FLAC__bool *b)
 {
-	FLAC__bool *b = (FLAC__bool *) addr;
 	int B;
 
 	B = PyObject_IsTrue(obj);
