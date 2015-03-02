@@ -525,6 +525,9 @@ flac_StreamMetadata_Ready ( void )
 {
 	PyTypeObject *type = PyFLAC_type(StreamMetadata);
 
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
+
 	type->tp_dealloc = (destructor) flac_StreamMetadata_dealloc;
 	type->tp_flags = Py_TPFLAGS_DEFAULT;
 	type->tp_doc = "FLAC StreamMetadata";
@@ -550,6 +553,9 @@ struct flac_StreamMetadataDataType {
 static int
 flac_StreamMetadataData_Ready (struct flac_StreamMetadataDataType *type)
 {
+	if (type->type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
+
 	type->type->tp_dealloc = (destructor) flac_StreamMetadata_dealloc;
 	type->type->tp_flags = Py_TPFLAGS_DEFAULT;
 	type->type->tp_doc = type->tp_doc;
@@ -1056,6 +1062,9 @@ static int
 flac_StreamMetadataSeekPoint_Ready ( void )
 {
 	PyTypeObject *type = PyFLAC_type(StreamMetadataSeekPoint);
+
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
 
 	type->tp_dealloc = (destructor) flac_StreamMetadataSeekPoint_dealloc;
 	type->tp_flags = Py_TPFLAGS_DEFAULT;
@@ -1656,6 +1665,9 @@ static int
 flac_StreamMetadataVorbisCommentEntry_Ready ( void )
 {
 	PyTypeObject *type = PyFLAC_type(StreamMetadataVorbisCommentEntry);
+
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
 
 	type->tp_dealloc = (destructor) flac_StreamMetadataVorbisCommentEntry_dealloc;
 	type->tp_flags = Py_TPFLAGS_DEFAULT;
@@ -2289,6 +2301,9 @@ flac_StreamMetadataCueSheetIndex_Ready ( void )
 {
 	PyTypeObject *type = PyFLAC_type(StreamMetadataCueSheetIndex);
 
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
+
 	type->tp_dealloc = (destructor) flac_StreamMetadataCueSheetIndex_dealloc;
 	type->tp_flags = Py_TPFLAGS_DEFAULT;
 	type->tp_doc = "FLAC StreamMetadataCueSheetIndex";
@@ -2864,6 +2879,9 @@ static int
 flac_StreamMetadataCueSheetTrack_Ready ( void )
 {
 	PyTypeObject *type = PyFLAC_type(StreamMetadataCueSheetTrack);
+
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
 
 	type->tp_dealloc = (destructor) flac_StreamMetadata_dealloc;
 	type->tp_flags = Py_TPFLAGS_DEFAULT;

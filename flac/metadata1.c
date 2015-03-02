@@ -491,6 +491,9 @@ flac_MetadataSimpleIteratorIter_Ready ( void )
 {
 	PyTypeObject *type = PyFLAC_type(MetadataSimpleIteratorIter);
 
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
+
 	type->tp_dealloc = (destructor) flac_MetadataSimpleIteratorIter_dealloc;
 	type->tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER;
 	type->tp_doc = "FLAC MetadataSimpleIterator iterable";
@@ -528,6 +531,9 @@ static int
 flac_MetadataSimpleIterator_Ready ( void )
 {
 	PyTypeObject *type = PyFLAC_type(MetadataSimpleIterator);
+
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
 
 	type->tp_dealloc = (destructor) flac_MetadataSimpleIterator_dealloc;
 	type->tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER;

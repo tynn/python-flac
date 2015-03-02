@@ -110,6 +110,9 @@ PyFLAC_Enum_Ready (PyTypeObject *type, flac_Enum_Member *member)
 {
 	int i = 0;
 
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
+
 	type->tp_dealloc = (destructor) PyObject_Del;
 	type->tp_repr = (reprfunc) flac_Enum_repr;
 	type->tp_str = (reprfunc) flac_Enum_str;

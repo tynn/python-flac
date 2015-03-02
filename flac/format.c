@@ -210,8 +210,8 @@ static PyTypeObject flac_IterType = {
 	0, 0, 0, 0, (reprfunc) flac_Iter_repr,
 	0, 0, 0, 0, 0, 0, 0, 0, 0,
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_ITER,
-	"Generic iterator", 0, 0, 0, 0,
-	PyObject_SelfIter, (iternextfunc) flac_Iter_next,
+	"Generic iterator", 0, 0, 0, 0, 0,
+	(iternextfunc) flac_Iter_next,
 	flac_Iter_methods, 0, 0, 0, 0, 0, 0
 };
 
@@ -250,6 +250,7 @@ flac_format_init (void)
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(FrameNumberType), enum_member_FrameNumberType));
 	PyFLAC_CHECK_status(PyFLAC_Enum_Ready(PyFLAC_type(MetadataType), enum_member_MetadataType));
 
+	flac_IterType.tp_iter = PyObject_SelfIter;
 	PyFLAC_CHECK_status(PyType_Ready(&flac_IterType));
 
 	_c_api_init
