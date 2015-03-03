@@ -18,6 +18,7 @@
  */
 
 #include "PyFLAC.h"
+#include <structmember.h>
 
 #define __PyFLAC_metadata_MODULE__
 #include "metadata.h"
@@ -1466,7 +1467,6 @@ static struct flac_StreamMetadataDataType flac_StreamMetadataSeekTableType = {
 };
 
 
-/* TODO - Create real string subtype */
 static PyTypeObject PyFLAC_StreamMetadataVorbisCommentEntryType = {
 	PyVarObject_HEAD_INIT(NULL,0)
 	PyFLAC_name(StreamMetadataVorbisCommentEntry),
@@ -2146,7 +2146,6 @@ typedef struct {
 } flac_StreamMetadataCueSheetIndexObject;
 
 
-/* TODO - Use real tuple subtype */
 static PyTypeObject PyFLAC_StreamMetadataCueSheetIndexType = {
 	PyVarObject_HEAD_INIT(NULL,0)
 	PyFLAC_name(StreamMetadataCueSheetIndex),
@@ -2192,41 +2191,37 @@ flac_StreamMetadataCueSheetIndex_new_object (PyTypeObject *type, FLAC__StreamMet
 static PyObject *
 flac_StreamMetadataCueSheetIndex_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
+	flac_StreamMetadataCueSheetIndexObject *index;
 	FLAC__StreamMetadata_CueSheet_Index data = { 0, 0 };
 
 	static char *kwlist[] = {"offset", "number", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O&O&", kwlist, _uint64, &data.offset, _byte, &data.number))
-		return NULL;
+	if (PyArg_ParseTuple(args, "O!", PyFLAC_type(StreamMetadataCueSheetIndex), &index))
+		return flac_StreamMetadataCueSheetIndex_new_object(type, index->data);
+
+	PyErr_Clear();
+
+	if (!PyArg_ParseTuple(args, "(O&O&)", _uint64, &data.offset, _byte, &data.number))
+	{
+		PyErr_Clear();
+
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O&O&", kwlist, _uint64, &data.offset, _byte, &data.number))
+			return NULL;
+	}
 
 	return flac_StreamMetadataCueSheetIndex_new_object(type, data);
 }
 
 
-static PyObject *
-flac_StreamMetadataCueSheetIndex_get (flac_StreamMetadataCueSheetIndexObject *self, void *closure)
-{
-	PyObject *get;
-
-	if (closure)
-		get = self->offset;
-	else
-		get = self->number;
-
-	Py_INCREF(get);
-	return get;
-}
-
-
-static PyGetSetDef flac_StreamMetadataCueSheetIndex_getseters[] = {
+static PyMemberDef flac_StreamMetadataCueSheetIndex_members[] = {
 	{
-		"offset",
-		(getter) flac_StreamMetadataCueSheetIndex_get, NULL,
-		"StreamMetadataCueSheetIndex offset", (void *) 1
+		"offset", T_OBJECT_EX,
+		offsetof(flac_StreamMetadataCueSheetIndexObject, offset),
+		READONLY, "StreamMetadataCueSheetIndex offset"
 	}, {
-		"number",
-		(getter) flac_StreamMetadataCueSheetIndex_get, NULL,
-		"StreamMetadataCueSheetIndex number", (void *) 0
+		"number", T_OBJECT_EX,
+		offsetof(flac_StreamMetadataCueSheetIndexObject, number),
+		READONLY, "StreamMetadataCueSheetIndex number"
 	}, { NULL }		/* Sentinel */
 };
 
@@ -2238,8 +2233,15 @@ flac_StreamMetadataCueSheetIndex_richcompare (flac_StreamMetadataCueSheetIndexOb
 	FLAC__byte num1, num2;
 	int comp;
 
-	if (!PyFLAC_type_Check(other, StreamMetadataCueSheetIndex))
+	if (PyFLAC_type_Check(other, StreamMetadataCueSheetIndex))
 	{
+		off2 = ((flac_StreamMetadataCueSheetIndexObject *) other)->data.offset;
+		num2 = ((flac_StreamMetadataCueSheetIndexObject *) other)->data.number;
+	}
+	else if (PyTuple_Size(other) != 2 || !_uint64(PyTuple_GET_ITEM(other, 0), &off2) || !_byte(PyTuple_GET_ITEM(other, 1), &num2))
+	{
+		PyErr_Clear();
+
 		if (op != Py_EQ && op != Py_NE)
 		{
 			Py_INCREF(Py_NotImplemented);
@@ -2251,10 +2253,6 @@ flac_StreamMetadataCueSheetIndex_richcompare (flac_StreamMetadataCueSheetIndexOb
 
 	off1 = self->data.offset;
 	num1 = self->data.number;
-
-	self = (flac_StreamMetadataCueSheetIndexObject *) other;
-	off2 = self->data.offset;
-	num2 = self->data.number;
 
 	if (off1 < off2)
 		comp = -1;
@@ -2308,7 +2306,7 @@ flac_StreamMetadataCueSheetIndex_Ready ( void )
 	type->tp_flags = Py_TPFLAGS_DEFAULT;
 	type->tp_doc = "FLAC StreamMetadataCueSheetIndex";
 	type->tp_richcompare = (richcmpfunc) flac_StreamMetadataCueSheetIndex_richcompare;
-	type->tp_getset = flac_StreamMetadataCueSheetIndex_getseters;
+	type->tp_members = flac_StreamMetadataCueSheetIndex_members;
 	type->tp_dict = NULL;
 	type->tp_new = flac_StreamMetadataCueSheetIndex_new;
 

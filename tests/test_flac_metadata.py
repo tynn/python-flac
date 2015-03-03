@@ -455,6 +455,23 @@ class FlacStreamMetadataCueSheetIndexTest (RichcompareTest, unittest.TestCase) :
 		o2 = StreamMetadataCueSheetIndex(2, 2)
 		self._test_lt_gt_ne(o1, o2)
 
+	def test_tuple (self) :
+		self.assertEqual(StreamMetadataCueSheetIndex(1, 2), (1, 2))
+		self.assertNotEqual(StreamMetadataCueSheetIndex(1, 2), (1, 3))
+		self.assertLess(StreamMetadataCueSheetIndex(1, 2), (1, 3))
+		self.assertLessEqual(StreamMetadataCueSheetIndex(1, 2), (2, 3))
+		self.assertLessEqual(StreamMetadataCueSheetIndex(1, 2), (1, 2))
+		self.assertGreater(StreamMetadataCueSheetIndex(2, 2), (1, 3))
+		self.assertGreaterEqual(StreamMetadataCueSheetIndex(3, 2), (2, 3))
+		self.assertGreaterEqual(StreamMetadataCueSheetIndex(1, 2), (1, 2))
+
+	def test_init (self) :
+		i = StreamMetadataCueSheetIndex(1, 2)
+		self.assertEqual(i.offset, 1)
+		self.assertEqual(i.number, 2)
+		self.assertEqual(i, StreamMetadataCueSheetIndex((1, 2)))
+		self.assertEqual(i, StreamMetadataCueSheetIndex(i))
+
 
 class FlacStreamMetadataCueSheetTrackTest (AttrsTest, unittest.TestCase) :
 	_class_ = StreamMetadataCueSheetTrack
