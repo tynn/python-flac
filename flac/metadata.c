@@ -354,6 +354,8 @@ flac_StreamMetadata_new_object (PyTypeObject *type, FLAC__MetadataType metadata_
 
 	if (self)
 	{
+		self->metadata = NULL;
+
 		self->metadata_type = PyFLAC_Enum_FromEnum(metadata_type, MetadataType);
 		if (self->metadata_type)
 		{
@@ -900,9 +902,9 @@ static PyTypeObject PyFLAC_StreamMetadataSeekPointType = {
 static void
 flac_StreamMetadataSeekPoint_dealloc (flac_StreamMetadataSeekPointObject *self)
 {
-	Py_DECREF(self->sample_number);
-	Py_DECREF(self->stream_offset);
-	Py_DECREF(self->frame_samples);
+	Py_XDECREF(self->sample_number);
+	Py_XDECREF(self->stream_offset);
+	Py_XDECREF(self->frame_samples);
 	PyObject_Del(self);
 }
 
@@ -915,7 +917,7 @@ flac_StreamMetadataSeekPoint_new_object (PyTypeObject *type, FLAC__StreamMetadat
 	self = PyObject_New(flac_StreamMetadataSeekPointObject, type);
 
 	if (self) {
-		self->data = data;
+		self->stream_offset = self->frame_samples = NULL;
 
 		self->sample_number = PyFLAC_uint64(data.sample_number);
 
@@ -929,11 +931,11 @@ flac_StreamMetadataSeekPoint_new_object (PyTypeObject *type, FLAC__StreamMetadat
 
 		if (!self->sample_number || !self->stream_offset || !self->frame_samples)
 		{
-			Py_XDECREF(self->sample_number);
-			Py_XDECREF(self->stream_offset);
 			Py_DECREF(self);
 			return NULL;
 		}
+
+		self->data = data;
 	}
 
 	return (PyObject *) self;
@@ -1513,6 +1515,8 @@ flac_StreamMetadataVorbisCommentEntry_new_object (PyTypeObject *type, FLAC__Stre
 		self_entry = flac_StreamMetadataVorbisCommentEntry_entry(self);
 		self_entry->length = entry->length;
 
+		self_entry->entry = NULL;
+
 		if (entry->entry)
 		{
 			self_entry->entry = PyMem_New(FLAC__byte, entry->length + 1);
@@ -1525,10 +1529,6 @@ flac_StreamMetadataVorbisCommentEntry_new_object (PyTypeObject *type, FLAC__Stre
 
 			Py_MEMCPY(self_entry->entry, entry->entry, entry->length);
 			self_entry->entry[entry->length] = '\0';
-		}
-		else
-		{
-			self_entry->entry = NULL;
 		}
 	}
 
@@ -2156,8 +2156,8 @@ static PyTypeObject PyFLAC_StreamMetadataCueSheetIndexType = {
 static void
 flac_StreamMetadataCueSheetIndex_dealloc (flac_StreamMetadataCueSheetIndexObject *self)
 {
-	Py_DECREF(self->offset);
-	Py_DECREF(self->number);
+	Py_XDECREF(self->offset);
+	Py_XDECREF(self->number);
 	PyObject_Del(self);
 }
 
@@ -2170,7 +2170,7 @@ flac_StreamMetadataCueSheetIndex_new_object (PyTypeObject *type, FLAC__StreamMet
 	self = PyObject_New(flac_StreamMetadataCueSheetIndexObject, type);
 
 	if (self) {
-		self->data = data;
+		self->number = NULL;
 
 		self->offset = PyFLAC_uint64(data.offset);
 		if (self->offset)
@@ -2178,10 +2178,11 @@ flac_StreamMetadataCueSheetIndex_new_object (PyTypeObject *type, FLAC__StreamMet
 
 		if (!self->offset || !self->number)
 		{
-			Py_XDECREF(self->offset);
 			Py_DECREF(self);
 			return NULL;
 		}
+
+		self->data = data;
 	}
 
 	return (PyObject *) self;
