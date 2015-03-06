@@ -360,22 +360,6 @@ flac_MetadataSimpleIterator_delete_block (flac_MetadataSimpleIteratorObject *sel
 }
 
 
-static PyObject *
-flac_MetadataSimpleIterator_reset (flac_MetadataSimpleIteratorObject *self)
-{
-	PyFLAC_CHECK_initialized(self);
-
-	while (FLAC__metadata_simple_iterator_prev(self->iterator));
-	if (flac_MetadataSimpleIterator_PyErr_FromIteratorStatus(self) < 0)
-		return NULL;
-
-	self->next = false;
-
-	Py_INCREF(self);
-	return (PyObject *) self;
-}
-
-
 static PyMethodDef flac_MetadataSimpleIterator_methods[] = {
 	{
 		"is_writable",
@@ -437,11 +421,6 @@ static PyMethodDef flac_MetadataSimpleIterator_methods[] = {
 		(PyCFunction) flac_MetadataSimpleIterator_delete_block,
 		METH_VARARGS,
 		"Delete block"
-	}, {
-		"reset",
-		(PyCFunction) flac_MetadataSimpleIterator_reset,
-		METH_NOARGS,
-		"Reset"
 	}, { NULL }		/* Sentinel */
 };
 
