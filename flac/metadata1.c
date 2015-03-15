@@ -58,27 +58,17 @@ flac_MetadataSimpleIterator_PyErr_FromIteratorStatus (flac_MetadataSimpleIterato
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_BAD_METADATA:
 			PyErr_SetString(PyFLAC_type(FlacFormatError), "illegal metadata");
 			return -1;
-		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_ERROR_OPENING_FILE:
-			PyErr_SetString(PyExc_IOError, "Could not open the file");
-			return -1;
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_NOT_WRITABLE:
 			self->init = init;
 			PyErr_SetString(PyExc_IOError, "File not open for writing");
 			return -1;
+		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_ERROR_OPENING_FILE:
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_READ_ERROR:
-			PyErr_SetString(PyExc_IOError, "reading the FLAC file");
-			return -1;
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_SEEK_ERROR:
-			PyErr_SetString(PyExc_IOError, "seeking in the FLAC file");
-			return -1;
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_WRITE_ERROR:
-			PyErr_SetString(PyExc_IOError, "writing the FLAC file");
-			return -1;
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_RENAME_ERROR:
-			PyErr_SetString(PyExc_IOError, "renaming the FLAC file");
-			return -1;
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_UNLINK_ERROR:
-			PyErr_SetString(PyExc_IOError, "removing the temporary file");
+			PyErr_SetFromErrno(PyExc_IOError);
 			return -1;
 		case FLAC__METADATA_SIMPLE_ITERATOR_STATUS_MEMORY_ALLOCATION_ERROR:
 			self->init = init;
@@ -102,6 +92,8 @@ static PyObject *
 flac_MetadataSimpleIterator_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
 	flac_MetadataSimpleIteratorObject *self;
+
+	(void)args, (void)kwds;
 
 	self = PyObject_New(flac_MetadataSimpleIteratorObject, type);
 
@@ -128,9 +120,11 @@ flac_MetadataSimpleIterator_init (flac_MetadataSimpleIteratorObject *self, PyObj
 	FLAC__bool read_only, preserve_file_stats;
 	const char *filename;
 
+	static char *kwlist[] = {"filename", "read_only", "preserve_file_stats", NULL};
+
 	read_only = preserve_file_stats = true;
 
-	if (!PyArg_ParseTuple(args, "s|O&O&", &filename, _bool, &read_only, _bool, &preserve_file_stats))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|O&O&", kwlist, &filename, _bool, &read_only, _bool, &preserve_file_stats))
 		return -1;
 
 	self->init = FLAC__metadata_simple_iterator_init(self->iterator, filename, read_only, preserve_file_stats);
