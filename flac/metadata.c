@@ -41,14 +41,6 @@
 	PyFLAC_Iter_New(data, data_size, flac_##type##_iternext, PyFLAC_name(type), (PyObject *) data_host)
 
 
-#define PyFLAC_CHECK_metadata_type(metadata_type) \
-	if (metadata_type < 0 || metadata_type >= FLAC__METADATA_TYPE_UNDEFINED) \
-	{ \
-		PyFLAC_RuntimeError("given " PyFLAC_name(MetadataType) " does not exist"); \
-		return NULL; \
-	}
-
-
 #define flac_StreamMetadataData_DEF(type) \
 static int flac_##type##_set (PyFLAC_StreamMetadataObject *, PyObject *, void *); \
 static PyTypeObject PyFLAC_##type##Type = { \
@@ -341,14 +333,18 @@ flac_StreamMetadata_dealloc (PyFLAC_StreamMetadataObject *self)
 
 
 static PyObject *
-flac_StreamMetadata_new_object (PyTypeObject *type, FLAC__MetadataType metadata_type, const FLAC__StreamMetadata *metadata)
+flac_StreamMetadata_new_object (FLAC__MetadataType metadata_type, const FLAC__StreamMetadata *metadata)
 {
 	PyFLAC_StreamMetadataObject *self;
 
 	if (metadata)
 		metadata_type = metadata->type;
 
-	PyFLAC_CHECK_metadata_type(metadata_type)
+	if (metadata_type < 0 || metadata_type >= FLAC__METADATA_TYPE_UNDEFINED)
+	{
+		PyFLAC_RuntimeError("given " PyFLAC_name(MetadataType) " does not exist");
+		return NULL;
+	}
 
 	self = PyObject_New(PyFLAC_StreamMetadataObject, flac_StreamMetadataData_setters[metadata_type].type);
 
@@ -379,64 +375,54 @@ flac_StreamMetadata_new_object (PyTypeObject *type, FLAC__MetadataType metadata_
 
 
 static PyObject *
-flac_StreamMetadata__new (PyTypeObject *type, PyObject *args, PyObject *kwds, const FLAC__MetadataType metadata_type)
+flac_StreamMetadata_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	PyFLAC_StreamMetadataObject *self;
+	PyObject *metadata_type;
+
+	(void)kwds;
+
+	if (!PyArg_ParseTuple(args, "O!", PyFLAC_type(MetadataType), &metadata_type))
+		return NULL;
+
+	return flac_StreamMetadata_new_object(PyFLAC_Enum_AsEnum(metadata_type, MetadataType), NULL);
+}
+
+
+static int
+flac_StreamMetadata_init (PyFLAC_StreamMetadataObject *self, PyObject *args, PyObject *kwds)
+{
+	FLAC__MetadataType metadata_type;
 	PyObject *objects[PyFLAC_Data_member_COUNT];
 	struct flac_StreamMetadataData_setter fs;
 	int i;
-
 	char format[] = "|" PyFLAC_Data_member_O;
 
-	PyFLAC_CHECK_metadata_type(metadata_type)
+	if (PyArg_ParseTuple(args, "O!", PyFLAC_type(MetadataType), &metadata_type))
+		return 0;
 
+	PyErr_Clear();
+
+	metadata_type = PyFLAC_Enum_AsEnum(self->metadata_type, MetadataType);
 	fs = flac_StreamMetadataData_setters[metadata_type];
-
-	if (!fs.member_count)
-		return flac_StreamMetadata_new_object(type, metadata_type, NULL);
 
 	format[fs.member_count + 1] = '\0';
 	PyFLAC_Data_member_objects(objects,=NULL);
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, format, fs.kwlist, PyFLAC_Data_member_objects(&objects,)))
-		return NULL;
+		return -1;
 
-	self = (PyFLAC_StreamMetadataObject *) flac_StreamMetadata_new_object(type, metadata_type, NULL);
-	if (self)
-		for (i = 0; i < fs.member_count; i++)
-			if (objects[i] && fs.set_member((PyObject *) self, objects[i], (void *) (long) i) < 0)
-			{
-				Py_DECREF(self);
-				return NULL;
-			}
+	for (i = 0; i < fs.member_count; i++)
+		if (objects[i] && fs.set_member((PyObject *) self, objects[i], (void *) (long) i) < 0)
+			return -1;
 
-	return (PyObject *) self;
-}
-
-
-static PyObject *
-flac_StreamMetadata_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
-{
-	PyObject *metadata;
-
-	if (!PyArg_ParseTuple(args, "O!", PyFLAC_type(MetadataType), &metadata))
-		return NULL;
-
-	args = PyTuple_New(0);
-	if (!args)
-		return NULL;
-
-	metadata = flac_StreamMetadata__new(type, args, kwds, PyFLAC_Enum_AsEnum(metadata, MetadataType));
-	Py_DECREF(args);
-
-	return metadata;
+	return 0;
 }
 
 
 static PyObject *
 flac_StreamMetadata_clone (PyFLAC_StreamMetadataObject *self)
 {
-	return flac_StreamMetadata_new_object(Py_TYPE(self), 0, self->metadata);
+	return flac_StreamMetadata_new_object(0, self->metadata);
 }
 
 
@@ -566,6 +552,7 @@ flac_StreamMetadataData_Ready (struct flac_StreamMetadataDataType *type)
 	type->type->tp_getset = type->tp_getset;
 	type->type->tp_base = PyFLAC_type(StreamMetadata);
 	type->type->tp_dict = NULL;
+	type->type->tp_init = (initproc) flac_StreamMetadata_init;
 	type->type->tp_new = type->tp_new;
 
 	return PyType_Ready(type->type);
@@ -575,7 +562,8 @@ flac_StreamMetadataData_Ready (struct flac_StreamMetadataDataType *type)
 static PyObject *
 flac_StreamMetadataStreamInfo_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	return flac_StreamMetadata__new(type, args, kwds, FLAC__METADATA_TYPE_STREAMINFO);
+	(void)args, (void)kwds;
+	return flac_StreamMetadata_new_object(FLAC__METADATA_TYPE_STREAMINFO, NULL);
 }
 
 
@@ -764,7 +752,8 @@ static struct flac_StreamMetadataDataType flac_StreamMetadataStreamInfoType = {
 static PyObject *
 flac_StreamMetadataPadding_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	return flac_StreamMetadata__new(type, args, kwds, FLAC__METADATA_TYPE_PADDING);
+	(void)args, (void)kwds;
+	return flac_StreamMetadata_new_object(FLAC__METADATA_TYPE_PADDING, NULL);
 }
 
 
@@ -798,7 +787,8 @@ static struct flac_StreamMetadataDataType flac_StreamMetadataPaddingType = {
 static PyObject *
 flac_StreamMetadataApplication_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	return flac_StreamMetadata__new(type, args, kwds, FLAC__METADATA_TYPE_APPLICATION);
+	(void)args, (void)kwds;
+	return flac_StreamMetadata_new_object(FLAC__METADATA_TYPE_APPLICATION, NULL);
 }
 
 
@@ -1405,7 +1395,8 @@ static PyMethodDef flac_StreamMetadataSeekTable_methods[] = {
 static PyObject *
 flac_StreamMetadataSeekTable_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	return flac_StreamMetadata__new(type, args, kwds, FLAC__METADATA_TYPE_SEEKTABLE);
+	(void)args, (void)kwds;
+	return flac_StreamMetadata_new_object(FLAC__METADATA_TYPE_SEEKTABLE, NULL);
 }
 
 
@@ -1952,7 +1943,8 @@ static PyMethodDef flac_StreamMetadataVorbisComment_methods[] = {
 static PyObject *
 flac_StreamMetadataVorbisComment_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	return flac_StreamMetadata__new(type, args, kwds, FLAC__METADATA_TYPE_VORBIS_COMMENT);
+	(void)args, (void)kwds;
+	return flac_StreamMetadata_new_object(FLAC__METADATA_TYPE_VORBIS_COMMENT, NULL);
 }
 
 
@@ -3132,7 +3124,8 @@ static PyMethodDef flac_StreamMetadataCueSheet_methods[] = {
 static PyObject *
 flac_StreamMetadataCueSheet_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	return flac_StreamMetadata__new(type, args, kwds, FLAC__METADATA_TYPE_CUESHEET);
+	(void)args, (void)kwds;
+	return flac_StreamMetadata_new_object(FLAC__METADATA_TYPE_CUESHEET, NULL);
 }
 
 
@@ -3354,7 +3347,8 @@ static PyMethodDef flac_StreamMetadataPicture_methods[] = {
 static PyObject *
 flac_StreamMetadataPicture_new (PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-	return flac_StreamMetadata__new(type, args, kwds, FLAC__METADATA_TYPE_PICTURE);
+	(void)args, (void)kwds;
+	return flac_StreamMetadata_new_object(FLAC__METADATA_TYPE_PICTURE, NULL);
 }
 
 
@@ -3584,7 +3578,7 @@ static PyMethodDef flac_metadata_functions[] = {
 static PyObject *
 PyFLAC_StreamMetadata_FromClass (const FLAC__StreamMetadata *metadata)
 {
-	return flac_StreamMetadata_new_object(PyFLAC_type(StreamMetadata), 0, metadata);
+	return flac_StreamMetadata_new_object(0, metadata);
 }
 
 
