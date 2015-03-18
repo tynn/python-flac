@@ -22,7 +22,108 @@
 #define __PyFLAC_format_MODULE__
 #include "format.h"
 
-#include "_enum.h"
+
+static int
+flac_Enum_add_member (PyTypeObject *type, PyFLAC_Enum_Member_Def *member)
+{
+	PyObject *name = PyString_FromString(member->e_name);
+	if (!name)
+		return -1;
+
+	member->e_object = PyObject_New(PyObject, type);
+	if (!member->e_object)
+		return -1;
+
+	((PyFLAC_EnumObject *) member->e_object)->e_value = member->e_value;
+	((PyFLAC_EnumObject *) member->e_object)->e_name = member->e_name;
+
+	PyFLAC_CHECK_status(PyObject_GenericSetAttr((PyObject *) type, name, member->e_object));
+	Py_DECREF(name);
+
+	return 0;
+}
+
+static int
+flac_Enum_sort_member (PyFLAC_Enum_Member_Def *member, int member_count)
+{
+	int i, j;
+	PyFLAC_Enum_Member_Def tmp;
+
+	for (i = 0; i < member_count; i++)
+		while (member[i].e_value != i)
+		{
+			j = member[i].e_value;
+			if (member[j].e_value == j)
+			{
+				PyFLAC_RuntimeError("repeating enum value");
+				return -1;
+			}
+
+			tmp = member[j];
+			member[j] = member[i];
+			member[i] = tmp;
+		}
+
+	return 0;
+}
+
+
+static PyObject *
+flac_Enum_repr (PyObject *self)
+{
+	return PyString_FromFormat("<enum %s of type %s>", ((PyFLAC_EnumObject *) self)->e_name, Py_TYPE(self)->tp_name);
+}
+
+static PyObject *
+flac_Enum_str (PyObject *self)
+{
+	return PyString_FromString(((PyFLAC_EnumObject *) self)->e_name);
+}
+
+
+static int
+PyFLAC_Enum_Ready (PyTypeObject *type, PyFLAC_Enum_Member_Def *member)
+{
+	int i = 0;
+
+	if (type->tp_flags & Py_TPFLAGS_READY)
+		return 0;
+
+	type->tp_dealloc = (destructor) PyObject_Del;
+	type->tp_repr = (reprfunc) flac_Enum_repr;
+	type->tp_str = (reprfunc) flac_Enum_str;
+	type->tp_dict = NULL;
+
+	while (member[i].e_name)
+		i++;
+	PyFLAC_CHECK_status(flac_Enum_sort_member(member, i));
+
+	PyFLAC_CHECK_status(PyType_Ready(type));
+
+	while (i--)
+		PyFLAC_CHECK_status(flac_Enum_add_member(type, &member[i]));
+
+	return 0;
+}
+
+
+static PyObject *
+PyFLAC_Enum_FromInt (int e_value, PyFLAC_Enum_Member_Def *data, const char *err_msg)
+{
+	int i;
+
+	for (i = 0; i < e_value; i++)
+		if(!data[i].e_name)
+		{
+			if(!err_msg)
+				err_msg = "invalid enum value";
+
+			PyErr_SetString(PyExc_ValueError, err_msg);
+			return NULL;
+		}
+
+	return data[e_value].e_object;
+}
 
 
 PyFLAC_Enum(EntropyCodingMethodType)
@@ -32,7 +133,7 @@ PyFLAC_Enum(FrameNumberType)
 PyFLAC_Enum(MetadataType)
 
 
-static flac_Enum_Member enum_member_EntropyCodingMethodType[] = {
+static PyFLAC_Enum_Member_Def enum_member_EntropyCodingMethodType[] = {
 	PyFLAC_Enum_Member(
 		"PARTITIONED_RICE",
 		ENTROPY_CODING_METHOD_PARTITIONED_RICE
@@ -45,7 +146,7 @@ static flac_Enum_Member enum_member_EntropyCodingMethodType[] = {
 };
 
 
-static flac_Enum_Member enum_member_SubframeType[] = {
+static PyFLAC_Enum_Member_Def enum_member_SubframeType[] = {
 	PyFLAC_Enum_Member(
 		"CONSTANT",
 		SUBFRAME_TYPE_CONSTANT
@@ -66,7 +167,7 @@ static flac_Enum_Member enum_member_SubframeType[] = {
 };
 
 
-static flac_Enum_Member enum_member_ChannelAssignment[] = {
+static PyFLAC_Enum_Member_Def enum_member_ChannelAssignment[] = {
 	PyFLAC_Enum_Member(
 		"INDEPENDENT",
 		CHANNEL_ASSIGNMENT_INDEPENDENT
@@ -87,7 +188,7 @@ static flac_Enum_Member enum_member_ChannelAssignment[] = {
 };
 
 
-static flac_Enum_Member enum_member_FrameNumberType[] = {
+static PyFLAC_Enum_Member_Def enum_member_FrameNumberType[] = {
 	PyFLAC_Enum_Member(
 		"FRAME_NUMBER",
 		FRAME_NUMBER_TYPE_FRAME_NUMBER
@@ -100,7 +201,7 @@ static flac_Enum_Member enum_member_FrameNumberType[] = {
 };
 
 
-static flac_Enum_Member enum_member_MetadataType[] = {
+static PyFLAC_Enum_Member_Def enum_member_MetadataType[] = {
 	PyFLAC_Enum_Member(
 		"STREAMINFO",
 		METADATA_TYPE_STREAMINFO

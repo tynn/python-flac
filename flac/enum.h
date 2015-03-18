@@ -20,21 +20,23 @@
 #ifndef __PyFLAC_enum_h__
 #define __PyFLAC_enum_h__
 
+typedef struct {
+	PyObject_HEAD
+	int e_value;
+	char *e_name;
+} PyFLAC_EnumObject;
+
+
 #define PyFLAC_Enum_FromEnum_NAME(type) PyFLAC_##type##_FromEnum
 
 #define PyFLAC_Enum_FromEnum(e_value,type) PyFLAC_Enum_FromEnum_NAME(type) (e_value)
 
 #define PyFLAC_Enum_FromEnum_DEF(type) static PyObject * PyFLAC_Enum_FromEnum (int e_value,type)
 
-#define PyFLAC_Enum_AsInt(object) (((struct flac_EnumObject *) object)->e_value)
+#define PyFLAC_Enum_AsInt(object) (((PyFLAC_EnumObject *) object)->e_value)
 
 #define PyFLAC_Enum_AsEnum(object,type) ((FLAC__##type) PyFLAC_Enum_AsInt(object))
 
-struct flac_EnumObject {
-	PyObject_HEAD
-	int e_value;
-	char *e_name;
-};
 
 #endif // __PyFLAC_enum_h__
 

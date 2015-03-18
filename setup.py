@@ -26,7 +26,6 @@ headers = {
 	"format": [
 			'enum.h',
 			'format.h',
-			'_enum.h',
 		],
 	"metadata": [
 			'enum.h',
@@ -34,7 +33,6 @@ headers = {
 			'metadata.h',
 			'_application_id.h',
 			'_bool.h',
-			'_enum.h',
 			'_list_of_type.h',
 			'_uintX.h',
 			'_uint8.h',
@@ -44,7 +42,6 @@ headers = {
 		],
 	"metadata0": [
 			'enum.h',
-			'format.h',
 			'metadata.h',
 			'_uintX.h',
 			'_unsigned.h',

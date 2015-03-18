@@ -18,8 +18,8 @@
  */
 
 #include "PyFLAC.h"
-#include "enum.h"
 
+#include "enum.h"
 #include "metadata.h"
 
 #include "_unsigned.h"

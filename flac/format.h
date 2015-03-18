@@ -28,8 +28,30 @@ extern "C" {
 
 typedef PyObject * (* PyFLAC_Iter_Next) (PyObject *, const void *, Py_ssize_t);
 
+typedef struct {
+	char *e_name;
+	int e_value;
+	PyObject *e_object;
+} PyFLAC_Enum_Member_Def;
+
 
 #include "enum.h"
+
+#define PyFLAC_Enum(type) \
+static PyTypeObject PyFLAC_##type##Type = { \
+	PyVarObject_HEAD_INIT(NULL,0) \
+	PyFLAC_name(type), \
+	sizeof(PyFLAC_EnumObject), \
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, \
+	Py_TPFLAGS_DEFAULT , "FLAC enum " #type, \
+};
+
+#define PyFLAC_Enum_Member(member_name,flac_enum) { member_name, FLAC__##flac_enum, NULL }
+
+#define PyFLAC_Enum_FromEnum_function(type,data) \
+PyFLAC_Enum_FromEnum_DEF(type) \
+{ return PyFLAC_Enum_FromInt(e_value, data, "invalid value for enum " #type); }
+
 
 #include "_C_API.h"
 
@@ -47,12 +69,15 @@ typedef PyObject * (* PyFLAC_Iter_Next) (PyObject *, const void *, Py_ssize_t);
 #define			_FrameNumberType_FromEnum_							 9
 #define			_MetadataType_FromEnum_								10
 
-#define			_Iter_New_											11
+#define			_Enum_Ready_										11
+#define			_Enum_FromInt_										12
+
+#define			_Iter_New_											13
 
 
 #ifdef __PyFLAC_format_MODULE__
 
-PyFLAC__C_API_DEF(12)
+PyFLAC__C_API_DEF(14)
 #define _c_api_init { \
 	PyFLAC_type_PUT(EntropyCodingMethodType,_EntropyCodingMethodType_type_) \
 	PyFLAC_type_PUT(SubframeType,_SubframeType_type_) \
@@ -65,6 +90,8 @@ PyFLAC__C_API_DEF(12)
 	PyFLAC_Enum_FromEnum_PUT(ChannelAssignment,_ChannelAssignment_FromEnum_) \
 	PyFLAC_Enum_FromEnum_PUT(FrameNumberType,_FrameNumberType_FromEnum_) \
 	PyFLAC_Enum_FromEnum_PUT(MetadataType,_MetadataType_FromEnum_) \
+	PyFLAC__C_API_PUT(_Enum_Ready_,PyFLAC_Enum_Ready) \
+	PyFLAC__C_API_PUT(_Enum_FromInt_,PyFLAC_Enum_FromInt) \
 	PyFLAC__C_API_PUT(_Iter_New_,PyFLAC_Iter_New) \
 	PyFLAC__C_API_INIT(format) \
 	PyFLAC__C_API_CHECK \
@@ -75,6 +102,9 @@ PyFLAC_Enum_FromEnum_DEF(SubframeType);
 PyFLAC_Enum_FromEnum_DEF(ChannelAssignment);
 PyFLAC_Enum_FromEnum_DEF(FrameNumberType);
 PyFLAC_Enum_FromEnum_DEF(MetadataType);
+
+static int PyFLAC_Enum_Ready (PyTypeObject *, PyFLAC_Enum_Member_Def *);
+static PyObject * PyFLAC_Enum_FromInt (int, PyFLAC_Enum_Member_Def *, const char *);
 
 static PyObject * PyFLAC_Iter_New (const void *, Py_ssize_t, PyFLAC_Iter_Next, const char *, PyObject *);
 
@@ -109,6 +139,11 @@ PyFLAC__C_API(format)
 	PyFLAC_Enum_FromEnum_API(format,_FrameNumberType_FromEnum_)
 #define PyFLAC_MetadataType_FromEnum \
 	PyFLAC_Enum_FromEnum_API(format,_MetadataType_FromEnum_)
+
+#define PyFLAC_Enum_Ready \
+	(*(int (*)(PyTypeObject *, PyFLAC_Enum_Member_Def *)) PyFLAC_API(format)[_Enum_Ready_])
+#define PyFLAC_Enum_FromInt \
+	(*(PyObject * (*)(int, PyFLAC_Enum_Member_Def *, const char *)) PyFLAC_API(format)[_Enum_FromInt_])
 
 #define PyFLAC_Iter_New \
 	(*(PyObject * (*)(const void *, Py_ssize_t, PyFLAC_Iter_Next, const char *, PyObject *)) PyFLAC_API(format)[_Iter_New_])

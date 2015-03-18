@@ -18,7 +18,6 @@
  */
 
 #include "PyFLAC.h"
-#include "enum.h"
 
 #include "format.h"
 #include "metadata.h"

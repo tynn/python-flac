@@ -33,8 +33,6 @@ typedef struct {
 } PyFLAC_StreamMetadataObject;
 
 
-#include "enum.h"
-
 #include "_C_API.h"
 
 #define			_StreamMetadata_type_								 0
@@ -46,6 +44,8 @@ typedef struct {
 
 
 #ifdef __PyFLAC_metadata_MODULE__
+
+#include "format.h"
 
 PyFLAC__C_API_DEF(4)
 #define _c_api_init { \

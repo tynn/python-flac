@@ -25,6 +25,10 @@
 #define PyFLAC_name(type) "flac." #type
 #endif // PyFLAC_name
 
+#ifndef PyFLAC_Enum_FromEnum_NAME
+#define PyFLAC_Enum_FromEnum_NAME(type) PyFLAC_##type##_FromEnum
+#endif // PyFLAC_Enum_FromEnum_NAME
+
 
 #define PyFLAC__C_API_DEF(count) \
 static PyObject *_c_api; \

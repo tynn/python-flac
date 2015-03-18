@@ -23,10 +23,6 @@
 #define __PyFLAC_metadata_MODULE__
 #include "metadata.h"
 
-#include "_enum.h"
-
-#include "format.h"
-
 #include "_application_id.h"
 #include "_bool.h"
 #include "_uint8.h"
@@ -53,7 +49,7 @@ static PyTypeObject PyFLAC_##type##Type = { \
 PyFLAC_Enum(StreamMetadataPictureType)
 
 
-static flac_Enum_Member enum_member_StreamMetadataPictureType[] = {
+static PyFLAC_Enum_Member_Def enum_member_StreamMetadataPictureType[] = {
 	PyFLAC_Enum_Member(
 		"OTHER",
 		STREAM_METADATA_PICTURE_TYPE_OTHER
