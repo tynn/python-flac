@@ -24,36 +24,21 @@ def _sources (*files) : return ['flac/' + file for file in files]
 headers = {
 	"_export": [],
 	"format": [
-			'enum.h',
 			'format.h',
 		],
 	"metadata": [
-			'enum.h',
 			'format.h',
 			'metadata.h',
-			'_application_id.h',
-			'_bool.h',
-			'_list_of_type.h',
-			'_uintX.h',
-			'_uint8.h',
-			'_uint32.h',
-			'_uint64.h',
-			'_unsigned.h',
 		],
 	"metadata0": [
-			'enum.h',
-			'metadata.h',
-			'_uintX.h',
-			'_unsigned.h',
-		],
-	"metadata1": [
-			'enum.h',
 			'format.h',
 			'metadata.h',
-			'_bool.h',
+		],
+	"metadata1": [
+			'format.h',
+			'metadata.h',
 		],
 	"metadata2": [
-			'enum.h',
 			'metadata.h',
 		],
 }

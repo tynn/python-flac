@@ -19,10 +19,8 @@
 
 #include "PyFLAC.h"
 
-#include "enum.h"
+#include "format.h"
 #include "metadata.h"
-
-#include "_unsigned.h"
 
 
 static PyObject *
@@ -118,10 +116,10 @@ flac_metadata0_get_picture (PyObject *null, PyObject *args, PyObject *kwds)
 					PyFLAC_type(StreamMetadataPictureType), &py_picture_type,
 					"ascii", &mime_type,
 					"utf-8", &description,
-					_unsigned, &max_width,
-					_unsigned, &max_height,
-					_unsigned, &max_depth,
-					_unsigned, &max_colors);
+					PyFLAC_unsigned_conv, &max_width,
+					PyFLAC_unsigned_conv, &max_height,
+					PyFLAC_unsigned_conv, &max_depth,
+					PyFLAC_unsigned_conv, &max_colors);
 
 	if (parsed)
 	{
@@ -181,6 +179,7 @@ static PyMethodDef flac_metadata0_functions[] = {
 static int
 flac_metadata0_init ( void )
 {
+	PyFLAC_CHECK_status(PyFLAC_import_format());
 	PyFLAC_CHECK_status(PyFLAC_import_metadata());
 	return 0;
 }

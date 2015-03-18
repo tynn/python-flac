@@ -23,15 +23,10 @@
 #define __PyFLAC_metadata_MODULE__
 #include "metadata.h"
 
-#include "_application_id.h"
-#include "_bool.h"
-#include "_uint8.h"
-#include "_uint32.h"
-#include "_uint64.h"
-#include "_unsigned.h"
-
-#include "_list_of_type.h"
-
+#define _bool PyFLAC_bool_conv
+#define _uint32 PyFLAC_uint32_conv
+#define _uint64 PyFLAC_uint64_conv
+#define _unsigned PyFLAC_unsigned_conv
 
 #define flac_Iter_New(type,data,data_size,data_host) \
 	PyFLAC_Iter_New(data, data_size, flac_##type##_iternext, PyFLAC_name(type), (PyObject *) data_host)
@@ -841,7 +836,7 @@ flac_StreamMetadataApplication_set (PyFLAC_StreamMetadataObject *self, PyObject 
 	switch (member)
 	{
 		case flac_StreamMetadataApplication_id:
-			return _application_id(value, &self->metadata->data.application.id) ? 0 : -1;
+			return PyFLAC_application_id_conv(value, &self->metadata->data.application.id) ? 0 : -1;
 		case flac_StreamMetadataApplication_data:
 			return flac_StreamMetadataApplication_set_data(self, value);
 		default:
@@ -1416,12 +1411,12 @@ flac_StreamMetadataSeekTable_set (PyFLAC_StreamMetadataObject *self, PyObject *p
 
 	point_list = NULL;
 
-	if (!flac_list_of_type(points, PyFLAC_type(StreamMetadataSeekPoint), &point_list, &point_count))
+	if (!PyFLAC_list_of_type(points, PyFLAC_type(StreamMetadataSeekPoint), &point_list, &point_count))
 		return -1;
 
 	if (!FLAC__metadata_object_seektable_resize_points(self->metadata, (unsigned) point_count))
 	{
-		flac_free_list_of_type(point_list, point_count);
+		PyFLAC_free_list_of_type(point_list, point_count);
 		PyErr_NoMemory();
 		return -1;
 	}
@@ -1430,7 +1425,7 @@ flac_StreamMetadataSeekTable_set (PyFLAC_StreamMetadataObject *self, PyObject *p
 	{
 		for (i = 0; i < point_count; i++)
 			FLAC__metadata_object_seektable_set_point(self->metadata, i, ((flac_StreamMetadataSeekPointObject *) point_list[i])->data);
-		flac_free_list_of_type(point_list, point_count);
+		PyFLAC_free_list_of_type(point_list, point_count);
 	}
 	else if (point_count)
 	{
@@ -2011,7 +2006,7 @@ flac_StreamMetadataVorbisComment_set_comments (PyFLAC_StreamMetadataObject *self
 		PyErr_SetString(PyExc_TypeError, "cannot delete the comments");
 		result = -1;
 	}
-	else if (!flac_list_of_type(comments, PyFLAC_type(StreamMetadataVorbisCommentEntry), &comment_list, &comment_count))
+	else if (!PyFLAC_list_of_type(comments, PyFLAC_type(StreamMetadataVorbisCommentEntry), &comment_list, &comment_count))
 	{
 		result = -1;
 	}
@@ -2068,7 +2063,7 @@ flac_StreamMetadataVorbisComment_set_comments (PyFLAC_StreamMetadataObject *self
 		}
 	}
 
-	flac_free_list_of_type(comment_list, comment_count);
+	PyFLAC_free_list_of_type(comment_list, comment_count);
 	return result;
 }
 
@@ -2190,11 +2185,11 @@ flac_StreamMetadataCueSheetIndex_new (PyTypeObject *type, PyObject *args, PyObje
 
 	PyErr_Clear();
 
-	if (!PyArg_ParseTuple(args, "(O&O&)", _uint64, &data.offset, _byte, &data.number))
+	if (!PyArg_ParseTuple(args, "(O&O&)", _uint64, &data.offset, PyFLAC_byte_conv, &data.number))
 	{
 		PyErr_Clear();
 
-		if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O&O&", kwlist, _uint64, &data.offset, _byte, &data.number))
+		if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O&O&", kwlist, _uint64, &data.offset, PyFLAC_byte_conv, &data.number))
 			return NULL;
 	}
 
@@ -2227,7 +2222,7 @@ flac_StreamMetadataCueSheetIndex_richcompare (flac_StreamMetadataCueSheetIndexOb
 		off2 = ((flac_StreamMetadataCueSheetIndexObject *) other)->data.offset;
 		num2 = ((flac_StreamMetadataCueSheetIndexObject *) other)->data.number;
 	}
-	else if (PyTuple_Size(other) != 2 || !_uint64(PyTuple_GET_ITEM(other, 0), &off2) || !_byte(PyTuple_GET_ITEM(other, 1), &num2))
+	else if (PyTuple_Size(other) != 2 || !_uint64(PyTuple_GET_ITEM(other, 0), &off2) || !PyFLAC_byte_conv(PyTuple_GET_ITEM(other, 1), &num2))
 	{
 		PyErr_Clear();
 
@@ -2405,7 +2400,7 @@ flac_StreamMetadataCueSheetTrack_init (flac_StreamMetadataCueSheetTrackObject *s
 	indices = NULL;
 	isrc = NULL;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O&O&esO&O&O", kwlist, _uint64, &data->offset, _byte, &data->number, "ascii", &isrc, _bool, &type, _bool, &pre_emphasis, &indices))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O&O&esO&O&O", kwlist, _uint64, &data->offset, PyFLAC_byte_conv, &data->number, "ascii", &isrc, _bool, &type, _bool, &pre_emphasis, &indices))
 		return -1;
 
 	if (isrc)
@@ -2744,7 +2739,7 @@ flac_StreamMetadataCueSheetTrack_set (flac_StreamMetadataCueSheetTrackObject *se
 	if (closure == (void *) 3)
 	{
 		PyFLAC_CHECK_delete(value, "number");
-		return _byte(value, &self->data->number) ? 0 : -1;
+		return PyFLAC_byte_conv(value, &self->data->number) ? 0 : -1;
 	}
 
 	if (closure == (void *) 2)
@@ -2792,12 +2787,12 @@ flac_StreamMetadataCueSheetTrack_set_indices (flac_StreamMetadataCueSheetTrackOb
 
 	index_list = NULL;
 
-	if (!flac_list_of_type(indices, PyFLAC_type(StreamMetadataCueSheetIndex), &index_list, &index_count))
+	if (!PyFLAC_list_of_type(indices, PyFLAC_type(StreamMetadataCueSheetIndex), &index_list, &index_count))
 		return -1;
 
 	if (!FLAC__metadata_object_cuesheet_track_resize_indices(self->cuesheet.metadata, 0, (unsigned) index_count))
 	{
-		flac_free_list_of_type(index_list, index_count);
+		PyFLAC_free_list_of_type(index_list, index_count);
 		PyErr_NoMemory();
 		return -1;
 	}
@@ -2806,7 +2801,7 @@ flac_StreamMetadataCueSheetTrack_set_indices (flac_StreamMetadataCueSheetTrackOb
 	{
 		for (i = 0; i < index_count; i++)
 			self->cuesheet.metadata->data.cue_sheet.tracks[0].indices[i] = ((flac_StreamMetadataCueSheetIndexObject *) index_list[i])->data;
-		flac_free_list_of_type(index_list, index_count);
+		PyFLAC_free_list_of_type(index_list, index_count);
 	}
 	else if (index_count)
 	{
@@ -3217,12 +3212,12 @@ flac_StreamMetadataCueSheet_set_tracks (PyFLAC_StreamMetadataObject *self, PyObj
 		return -1;
 	}
 
-	if (!flac_list_of_type(tracks, PyFLAC_type(StreamMetadataCueSheetTrack), &track_list, &track_count))
+	if (!PyFLAC_list_of_type(tracks, PyFLAC_type(StreamMetadataCueSheetTrack), &track_list, &track_count))
 		return -1;
 
 	if (!FLAC__metadata_object_cuesheet_resize_tracks(self->metadata, (unsigned) track_count))
 	{
-		flac_free_list_of_type(track_list, track_count);
+		PyFLAC_free_list_of_type(track_list, track_count);
 		PyErr_NoMemory();
 		return -1;
 	}
@@ -3233,7 +3228,7 @@ flac_StreamMetadataCueSheet_set_tracks (PyFLAC_StreamMetadataObject *self, PyObj
 			if (!FLAC__metadata_object_cuesheet_set_track(self->metadata, i, ((flac_StreamMetadataCueSheetTrackObject *) track_list[i])->data, true))
 				break;
 
-		flac_free_list_of_type(track_list, track_count);
+		PyFLAC_free_list_of_type(track_list, track_count);
 
 		if (i == track_count)
 			return 0;

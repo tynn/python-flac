@@ -23,6 +23,185 @@
 #include "format.h"
 
 
+static void
+PyFLAC_free_list_of_type (PyObject **list, Py_ssize_t count)
+{
+	if (list)
+	{
+		while (count--)
+			Py_DECREF(list[count]);
+		PyMem_Del(list);
+	}
+}
+
+static int
+PyFLAC_list_of_type (PyObject *object, PyTypeObject *type, PyObject ***ret_list, Py_ssize_t *ret_count)
+{
+	PyObject *item, **list;
+	Py_ssize_t count, i;
+
+	if (PyObject_TypeCheck(object, type))
+	{
+		*ret_count = 1;
+		*ret_list = NULL;
+		return 1;
+	}
+
+	list = NULL;
+
+	if (PyTuple_Check(object) || PyList_Check(object))
+	{
+		count = PySequence_Size(object);
+		if (count == -1)
+			return 0;
+
+		if (!count)
+		{
+			*ret_count = 0;
+			*ret_list = NULL;
+			return 1;
+		}
+
+		list = PyMem_New(PyObject *, count);
+		if (!list)
+		{
+			PyErr_NoMemory();
+			return 0;
+		}
+
+		for (i = 0; i < count; i++)
+		{
+			item = PySequence_GetItem(object, i);
+			if (!item)
+			{
+				PyFLAC_free_list_of_type(list, i);
+				return 0;
+			}
+
+			if (!PyObject_TypeCheck(item, type))
+				break;
+
+			Py_INCREF(item);
+			list[i] = item;
+		}
+
+		if (i == count)
+		{
+			*ret_count = count;
+			*ret_list = list;
+			return 1;
+		}
+
+		PyFLAC_free_list_of_type(list, i);
+	}
+
+	PyErr_Format(PyExc_TypeError, "must be a list of %.50s", type->tp_name);
+	return 0;
+}
+
+
+static int
+PyFLAC_application_id_conv (PyObject *obj, FLAC__byte (*id)[4])
+{
+	Py_ssize_t length;
+	char *bytes;
+	int state;
+
+	Py_INCREF(obj);
+
+	if (PyUnicode_Check(obj))
+	{
+		Py_DECREF(obj);
+		if (!(obj = PyUnicode_AsASCIIString(obj)))
+			return 0;
+	}
+
+	state = 0;
+
+	if (!PyBytes_Check(obj))
+		state = 1;
+	else if (PyBytes_AsStringAndSize(obj, &bytes, &length) < 0)
+		state = 2;
+	else if (length != 4)
+		state = 1;
+
+	Py_DECREF(obj);
+
+	switch (state)
+	{
+		case 1:
+			PyErr_Format(PyExc_TypeError, "must be %.50s or unicode of length 4", PyBytes_Type.tp_name);
+		case 2:
+			return 0;
+		default:
+			(*id)[0] = bytes[0];
+			(*id)[1] = bytes[1];
+			(*id)[2] = bytes[2];
+			(*id)[3] = bytes[3];
+			return 1;
+	}
+}
+
+static int
+PyFLAC_bool_conv (PyObject *obj, FLAC__bool *b)
+{
+	int B;
+
+	B = PyObject_IsTrue(obj);
+
+	if (B < 0)
+		return 0;
+
+	*b = (FLAC__bool) B;
+	return 1;
+}
+
+static int
+flac_uintX (PyObject *obj, unsigned PY_LONG_LONG *value, Py_ssize_t size)
+{
+	PY_LONG_LONG l;
+	int overflow;
+
+	const unsigned PY_LONG_LONG MAX = ((unsigned PY_LONG_LONG) -1) >> (sizeof(unsigned PY_LONG_LONG) - size) * 8;
+
+	l = PyLong_AsLongLongAndOverflow(obj, &overflow);
+
+	if (l >= 0 && ((unsigned PY_LONG_LONG) l) <= MAX)
+	{
+		*value = (unsigned PY_LONG_LONG) l;
+		return 1;
+	}
+
+	if (l == -1)
+	{
+		if (!overflow && PyErr_Occurred())
+			return 0;
+
+		if (overflow > 0 && size == sizeof(unsigned PY_LONG_LONG))
+		{
+			l = (PY_LONG_LONG) PyLong_AsUnsignedLongLong(obj);
+			obj = (l == -1) ? PyErr_Occurred() : NULL;
+
+			if (obj)
+			{
+				if (obj != PyExc_OverflowError)
+					return 0;
+
+				PyErr_Clear();
+			}
+			else
+			{
+				*value = (unsigned PY_LONG_LONG) l;
+				return 1;
+			}
+		}
+	}
+
+	PyErr_Format(PyExc_ValueError, "value must be >= 0 and <= %llu", MAX);
+	return 0;
+}
+
+
 static int
 flac_Enum_add_member (PyTypeObject *type, PyFLAC_Enum_Member_Def *member)
 {

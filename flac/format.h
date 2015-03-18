@@ -29,13 +29,23 @@ extern "C" {
 typedef PyObject * (* PyFLAC_Iter_Next) (PyObject *, const void *, Py_ssize_t);
 
 typedef struct {
+	PyObject_HEAD
+	int e_value;
+	char *e_name;
+} PyFLAC_EnumObject;
+
+typedef struct {
 	char *e_name;
 	int e_value;
 	PyObject *e_object;
 } PyFLAC_Enum_Member_Def;
 
 
-#include "enum.h"
+#define PyFLAC_Enum_FromEnum_NAME(type) PyFLAC_##type##_FromEnum
+#define PyFLAC_Enum_FromEnum(e_value,type) PyFLAC_Enum_FromEnum_NAME(type) (e_value)
+#define PyFLAC_Enum_FromEnum_DEF(type) static PyObject * PyFLAC_Enum_FromEnum (int e_value,type)
+#define PyFLAC_Enum_AsInt(object) (((PyFLAC_EnumObject *) object)->e_value)
+#define PyFLAC_Enum_AsEnum(object,type) ((FLAC__##type) PyFLAC_Enum_AsInt(object))
 
 #define PyFLAC_Enum(type) \
 static PyTypeObject PyFLAC_##type##Type = { \
@@ -74,10 +84,33 @@ PyFLAC_Enum_FromEnum_DEF(type) \
 
 #define			_Iter_New_											13
 
+#define			_application_id_conv_								14
+#define			_bool_conv_											15
+#define			_uint8_conv_										16
+#define			_uint32_conv_										17
+#define			_uint64_conv_										18
+#define			_unsigned_conv_										19
+
+#define			_list_of_type_										20
+#define			_free_list_of_type_									21
+
 
 #ifdef __PyFLAC_format_MODULE__
 
-PyFLAC__C_API_DEF(14)
+static int flac_uintX (PyObject *, unsigned PY_LONG_LONG *, Py_ssize_t);
+#define PyFLAC_uintX(type,TYPE) \
+static int \
+PyFLAC_##type##_conv (PyObject *obj, TYPE *v) \
+{ \
+	unsigned PY_LONG_LONG l; \
+	if (!flac_uintX(obj, &l, sizeof(TYPE))) return 0; \
+	*v = (TYPE) l; \
+	return 1; \
+}
+
+#define PyFLAC_conv_PUT(type,i) PyFLAC__C_API_PUT(i,PyFLAC_##type##_conv)
+
+PyFLAC__C_API_DEF(22)
 #define _c_api_init { \
 	PyFLAC_type_PUT(EntropyCodingMethodType,_EntropyCodingMethodType_type_) \
 	PyFLAC_type_PUT(SubframeType,_SubframeType_type_) \
@@ -93,6 +126,14 @@ PyFLAC__C_API_DEF(14)
 	PyFLAC__C_API_PUT(_Enum_Ready_,PyFLAC_Enum_Ready) \
 	PyFLAC__C_API_PUT(_Enum_FromInt_,PyFLAC_Enum_FromInt) \
 	PyFLAC__C_API_PUT(_Iter_New_,PyFLAC_Iter_New) \
+	PyFLAC_conv_PUT(application_id,_application_id_conv_)\
+	PyFLAC_conv_PUT(bool,_bool_conv_)\
+	PyFLAC_conv_PUT(uint8,_uint8_conv_)\
+	PyFLAC_conv_PUT(uint32,_uint32_conv_)\
+	PyFLAC_conv_PUT(uint64,_uint64_conv_)\
+	PyFLAC_conv_PUT(unsigned,_unsigned_conv_)\
+	PyFLAC__C_API_PUT(_list_of_type_,PyFLAC_list_of_type) \
+	PyFLAC__C_API_PUT(_free_list_of_type_,PyFLAC_free_list_of_type) \
 	PyFLAC__C_API_INIT(format) \
 	PyFLAC__C_API_CHECK \
 }
@@ -110,6 +151,17 @@ static PyObject * PyFLAC_Iter_New (const void *, Py_ssize_t, PyFLAC_Iter_Next, c
 
 static PyObject *flac_FlacFormatErrorType;
 #define PyFLAC_FlacFormatErrorType (*flac_FlacFormatErrorType)
+
+static int PyFLAC_application_id_conv (PyObject *, FLAC__byte (*)[4]);
+static int PyFLAC_bool_conv (PyObject *, FLAC__bool *);
+PyFLAC_uintX(uint8,FLAC__uint8)
+PyFLAC_uintX(uint32,FLAC__uint32)
+PyFLAC_uintX(uint64,FLAC__uint64)
+PyFLAC_uintX(unsigned,unsigned)
+
+static int PyFLAC_list_of_type (PyObject *, PyTypeObject *, PyObject ***, Py_ssize_t *);
+static void PyFLAC_free_list_of_type (PyObject **, Py_ssize_t);
+
 
 #else // __PyFLAC_format_MODULE__
 
@@ -148,8 +200,26 @@ PyFLAC__C_API(format)
 #define PyFLAC_Iter_New \
 	(*(PyObject * (*)(const void *, Py_ssize_t, PyFLAC_Iter_Next, const char *, PyObject *)) PyFLAC_API(format)[_Iter_New_])
 
+#define PyFLAC_application_id_conv \
+	(*(int (*)(PyObject *, FLAC__byte (*)[4])) PyFLAC_API(format)[_application_id_conv_])
+#define PyFLAC_conv_DEF(TYPE,i) \
+	(*(int (*)(PyObject *, TYPE *)) PyFLAC_API(format)[i])
+#define PyFLAC_bool_conv PyFLAC_conv_DEF(FLAC__bool,_bool_conv_)
+#define PyFLAC_uint8_conv PyFLAC_conv_DEF(FLAC__uint8,_uint8_conv_)
+#define PyFLAC_uint32_conv PyFLAC_conv_DEF(FLAC__uint32,_uint32_conv_)
+#define PyFLAC_uint64_conv PyFLAC_conv_DEF(FLAC__uint64,_uint64_conv_)
+#define PyFLAC_unsigned_conv  PyFLAC_conv_DEF(unsigned,_unsigned_conv_)
+
+#define PyFLAC_list_of_type \
+	(*(int (*)(PyObject *, PyTypeObject *, PyObject ***, Py_ssize_t *)) PyFLAC_API(format)[_list_of_type_])
+#define PyFLAC_free_list_of_type \
+	(*(void (*)(PyObject **, Py_ssize_t)) PyFLAC_API(format)[_free_list_of_type_])
+
+
 #endif // __PyFLAC_format_MODULE__
 
+
+#define PyFLAC_byte_conv PyFLAC_uint8_conv
 
 #ifdef __cplusplus
 }

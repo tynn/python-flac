@@ -22,8 +22,6 @@
 #include "format.h"
 #include "metadata.h"
 
-#include "_bool.h"
-
 
 #define PyFLAC_CHECK_initialized(self) PyFLAC_CHECK(!(self->init),(PyFLAC_RuntimeError("iterator not initialized"), NULL))
 
@@ -123,7 +121,7 @@ flac_MetadataSimpleIterator_init (flac_MetadataSimpleIteratorObject *self, PyObj
 
 	read_only = preserve_file_stats = true;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|O&O&", kwlist, &filename, _bool, &read_only, _bool, &preserve_file_stats))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|O&O&", kwlist, &filename, PyFLAC_bool_conv, &read_only, PyFLAC_bool_conv, &preserve_file_stats))
 		return -1;
 
 	self->init = FLAC__metadata_simple_iterator_init(self->iterator, filename, read_only, preserve_file_stats);
@@ -280,7 +278,7 @@ flac_MetadataSimpleIterator_set_block (flac_MetadataSimpleIteratorObject *self, 
 
 	use_padding = true;
 
-	if (!PyArg_ParseTuple(args, "O!|O&", PyFLAC_type(StreamMetadata), &metadata, _bool, &use_padding))
+	if (!PyArg_ParseTuple(args, "O!|O&", PyFLAC_type(StreamMetadata), &metadata, PyFLAC_bool_conv, &use_padding))
 		return NULL;
 
 	if (FLAC__metadata_simple_iterator_set_block(self->iterator, metadata->metadata, use_padding))
@@ -308,7 +306,7 @@ flac_MetadataSimpleIterator_insert_block_after (flac_MetadataSimpleIteratorObjec
 
 	use_padding = true;
 
-	if (!PyArg_ParseTuple(args, "O!|O&", PyFLAC_type(StreamMetadata), &metadata, _bool, &use_padding))
+	if (!PyArg_ParseTuple(args, "O!|O&", PyFLAC_type(StreamMetadata), &metadata, PyFLAC_bool_conv, &use_padding))
 		return NULL;
 
 	if (FLAC__metadata_simple_iterator_insert_block_after(self->iterator, metadata->metadata, use_padding))
@@ -342,7 +340,7 @@ flac_MetadataSimpleIterator_delete_block (flac_MetadataSimpleIteratorObject *sel
 
 	use_padding = true;
 
-	if (!PyArg_ParseTuple(args, "|O&", _bool, &use_padding))
+	if (!PyArg_ParseTuple(args, "|O&", PyFLAC_bool_conv, &use_padding))
 		return NULL;
 
 	if (FLAC__metadata_simple_iterator_delete_block(self->iterator, use_padding))
