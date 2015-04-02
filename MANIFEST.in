@@ -1,3 +1,4 @@
 include LICENSE.LGPL LICENSE.GPL README.md disttest.py MANIFEST.in
 recursive-include flac *.c *.h *.py
-recursive-include test *.py
+recursive-include scripts *.py
+recursive-include tests *.py *.flac *.raw

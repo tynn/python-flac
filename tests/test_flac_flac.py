@@ -27,6 +27,10 @@ class FlacFlacTest (unittest.TestCase) :
 		for attr in attrs :
 			self.assertIs(getattr(flac.flac, attr), getattr(module, attr))
 
+	def test_decoder (self) :
+		import flac.decoder
+		self._test_attrs(flac.decoder)
+
 	def test_format (self) :
 		import flac.format
 		self._test_attrs(flac.format)
@@ -46,6 +50,10 @@ class FlacFlacTest (unittest.TestCase) :
 	def test_metadata2 (self) :
 		import flac.metadata2
 		self._test_attrs(flac.metadata2)
+
+	def test_stream_decoder (self) :
+		import flac.stream_decoder
+		self._test_attrs(flac.stream_decoder)
 
 
 if __name__ == "__main__" : unittest.main()

@@ -23,6 +23,11 @@ def _sources (*files) : return ['flac/' + file for file in files]
 
 headers = {
 	"_export": [],
+	"decoder": [
+			'decoder.h',
+			'format.h',
+			'metadata.h',
+		],
 	"format": [
 			'format.h',
 		],
