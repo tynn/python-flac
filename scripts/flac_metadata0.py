@@ -17,7 +17,7 @@
 #	along with python-flac.  If not, see <http://www.gnu.org/licenses/>.
 
 import flac.metadata0 as flac
-import mimetypes, os, signal, sys
+import mimetypes, os.path, signal, sys
 
 def _printf (format, *args) :
 	print (format.format(*args))
