@@ -116,7 +116,10 @@ class PcmDecoder (StreamDecoder) :
 
 	def __init__ (self, big_endian=None) :
 		from sys import byteorder
-		self.I = (3, 2, 1, 0) if byteorder == 'big' else (0, 1, 0, 1)
+		self.I = (3, 2) if byteorder == 'big' else (0, 1)
+		if not isinstance(big_endian, bool) :
+			big_endian = byteorder == 'big'
+		self.O = (int(big_endian), int(not big_endian))
 
 	def __decoder_write__ (self, frame, buffer) :
 		if frame.channels > 2 :
@@ -124,8 +127,8 @@ class PcmDecoder (StreamDecoder) :
 		l = frame.channels * 2
 		pcm = bytearray(l * frame.blocksize)
 		for n, data in enumerate(buffer) :
-			pcm[2*n+self.I[2]::l] = self._slice(data, self.I[0], None, 4)
-			pcm[2*n+self.I[3]::l] = self._slice(data, self.I[1], None, 4)
+			pcm[2*n+self.O[0]::l] = self._slice(data, self.I[0], None, 4)
+			pcm[2*n+self.O[1]::l] = self._slice(data, self.I[1], None, 4)
 		pcm = bytes(pcm)
 		return self.__decoder_write_pcm__(pcm)
 

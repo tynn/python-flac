@@ -259,7 +259,7 @@ class FlacPcmDecoderTest (unittest.TestCase) :
 		data = []
 		def write_pcm (pcm) :
 			data.append(pcm)
-		decoder = PcmDecoder()
+		decoder = PcmDecoder(big_endian=True)
 		decoder.__decoder_write_pcm__ = write_pcm
 		decoder.init_file(_files.w10_1)
 		decoder.process_until_end_of_stream()
