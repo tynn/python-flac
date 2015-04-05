@@ -78,7 +78,7 @@ class FlacStreamDecoderTest (unittest.TestCase) :
 		self.assertIs(StreamDecoderInitStatus.OK, self.decoder.init_stream(self))
 		self.assertFalse(self.decoder.process_single())
 
-	def test_init_ogg_file (self) :
+	def test_init_ogg_stream (self) :
 		self.assertIs(StreamDecoderInitStatus.OK, self.decoder.init_ogg_stream(self))
 		self.assertFalse(self.decoder.process_single())
 
@@ -134,6 +134,10 @@ class FlacStreamDecoderDecodeTest (StreamDecoder, unittest.TestCase) :
 		self.init_file(file)
 		return self.process_until_end_of_metadata()
 
+	def test_get_resolved_state_string (self) :
+		string = self.get_resolved_state_string()
+		self.assertEqual(string, "FLAC__STREAM_DECODER_" + str(self.get_state()))
+
 	def test_stream_info (self) :
 		self._process_metadata(_files.w10_1)
 		self.process_single()
@@ -143,14 +147,6 @@ class FlacStreamDecoderDecodeTest (StreamDecoder, unittest.TestCase) :
 		self.assertEqual(self.get_sample_rate(), stream_info.sample_rate)
 		self.assertEqual(self.get_total_samples(), stream_info.total_samples)
 		self.assertTrue(stream_info.min_blocksize <= self.get_blocksize() <= stream_info.max_blocksize)
-
-	def test_get_resolved_state_string (self) :
-		string = self.get_resolved_state_string()
-		self.assertIsInstance(string, str)
-		self.assertEqual(string, "FLAC__STREAM_DECODER_" + str(self.get_state()))
-
-	def test_get_state (self) :
-		self.assertIsInstance(self.get_state(), StreamDecoderState)
 
 	def test_get_channel_assignment (self) :
 		self._process_metadata(_files.w10_1)

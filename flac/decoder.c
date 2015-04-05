@@ -1004,10 +1004,7 @@ flac_StreamDecoder_dealloc (flac_StreamDecoderObject *self)
 {
 	PyObject_GC_UnTrack(self);
 	if (self->decoder)
-	{
-		FLAC__stream_decoder_finish(self->decoder);
 		FLAC__stream_decoder_delete(self->decoder);
-	}
 	Py_XDECREF(self->stream);
 	Py_TYPE(self)->tp_free((PyObject *) self);
 }
