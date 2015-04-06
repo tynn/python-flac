@@ -17,7 +17,7 @@
 
 """ Unit tests for the flac package """
 
-import os, unittest
+import os.path, unittest
 
 def load_tests (loader, tests, pattern) :
 	tests.addTests(loader.discover(os.path.dirname(__file__)))

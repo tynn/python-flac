@@ -31,6 +31,10 @@ class FlacFlacTest (unittest.TestCase) :
 		import flac.decoder
 		self._test_attrs(flac.decoder)
 
+	def test_encoder (self) :
+		import flac.encoder
+		self._test_attrs(flac.encoder)
+
 	def test_format (self) :
 		import flac.format
 		self._test_attrs(flac.format)
@@ -54,6 +58,10 @@ class FlacFlacTest (unittest.TestCase) :
 	def test_stream_decoder (self) :
 		import flac.stream_decoder
 		self._test_attrs(flac.stream_decoder)
+
+	def test_stream_encoder (self) :
+		import flac.stream_encoder
+		self._test_attrs(flac.stream_encoder)
 
 
 if __name__ == "__main__" : unittest.main()

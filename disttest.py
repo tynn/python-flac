@@ -31,7 +31,7 @@
 		git pull disttest master
 """
 
-import importlib, inspect, os, sys, unittest
+import importlib, inspect, os.path, sys, unittest
 from distutils.core import *
 
 

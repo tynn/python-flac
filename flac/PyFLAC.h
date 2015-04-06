@@ -78,8 +78,6 @@
 
 #define PyFLAC_string(string_value) PyString_FromString((char *) string_value)
 
-#define PyFLAC_string2(string_value,string_length) PyString_FromStringAndSize((char *) string_value, (Py_ssize_t) string_length)
-
 #define PyFLAC_data(data,length) PyBytes_FromStringAndSize((char *) data, (Py_ssize_t) length)
 
 #define PyFLAC_off_t(off_value) PyLong_FromLongLong((PY_LONG_LONG) off_value)

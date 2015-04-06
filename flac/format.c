@@ -37,19 +37,17 @@ PyFLAC_free_list_of_type (PyObject **list, Py_ssize_t count)
 static int
 PyFLAC_list_of_type (PyObject *object, PyTypeObject *type, PyObject ***ret_list, Py_ssize_t *ret_count)
 {
-	PyObject *item, **list;
-	Py_ssize_t count, i;
+	Py_ssize_t count, i = 0;
+	PyObject *item, **tmp, **list = NULL;
 
-	if (PyObject_TypeCheck(object, type))
+	if (type && PyObject_TypeCheck(object, type))
 	{
 		*ret_count = 1;
 		*ret_list = NULL;
 		return 1;
 	}
 
-	list = NULL;
-
-	if (PyTuple_Check(object) || PyList_Check(object))
+	if (PySequence_Check(object))
 	{
 		count = PySequence_Size(object);
 		if (count == -1)
@@ -78,10 +76,12 @@ PyFLAC_list_of_type (PyObject *object, PyTypeObject *type, PyObject ***ret_list,
 				return 0;
 			}
 
-			if (!PyObject_TypeCheck(item, type))
+			if (type && !PyObject_TypeCheck(item, type))
+			{
+				Py_INCREF(item);
 				break;
+			}
 
-			Py_INCREF(item);
 			list[i] = item;
 		}
 
@@ -91,11 +91,59 @@ PyFLAC_list_of_type (PyObject *object, PyTypeObject *type, PyObject ***ret_list,
 			*ret_list = list;
 			return 1;
 		}
+	}
+	else if (PyIter_Check(object))
+	{
+		list = PyMem_New(PyObject *, count = 16);
 
-		PyFLAC_free_list_of_type(list, i);
+		i = 0;
+		while ((item = PyIter_Next(object)))
+		{
+			if (type && !PyObject_TypeCheck(item, type))
+			{
+				Py_DECREF(item);
+				break;
+			}
+
+			if (count <= i)
+			{
+				tmp = list;
+				if (!PyMem_Resize(list, PyObject *, count = 2 * count))
+				{
+					PyErr_NoMemory();
+					Py_DECREF(item);
+					list = tmp;
+					break;
+				}
+			}
+
+			list[i++] = item;
+		}
+
+		if (!item && !PyErr_Occurred())
+		{
+			*ret_count = i;
+			*ret_list = list;
+			return 1;
+		}
+	}
+	else
+	{
+		if ((object = PyObject_GetIter(object)))
+			return PyFLAC_list_of_type(object, type, ret_list, ret_count);
+
+		PyErr_Clear();
 	}
 
-	PyErr_Format(PyExc_TypeError, "must be a list of %.50s", type->tp_name);
+	if (!PyErr_Occurred())
+	{
+		if (type)
+			PyErr_Format(PyExc_TypeError, "must be a sequence or an iterator of %.50s", type->tp_name);
+		else
+			PyErr_SetString(PyExc_TypeError, "must be a sequence or an iterator");
+	}
+
+	PyFLAC_free_list_of_type(list, i);
 	return 0;
 }
 

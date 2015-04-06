@@ -19,5 +19,6 @@
 
 from .format import *
 from .stream_decoder import *
+from .stream_encoder import *
 from .stream_metadata import *
 

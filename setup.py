@@ -28,6 +28,12 @@ headers = {
 			'format.h',
 			'metadata.h',
 		],
+	"encoder": [
+			'decoder.h',
+			'encoder.h',
+			'format.h',
+			'metadata.h',
+		],
 	"format": [
 			'format.h',
 		],
