@@ -155,7 +155,7 @@ def _extend_setup (_setup = setup, _Distribution = Distribution) :
 		elif not hasattr(attrs['distclass'], 'test_suite') :
 			attrs['distclass'] = type('Distribution', (attrs['distclass'], object), {"test_suite": None})
 
-		_setup(**attrs)
+		return _setup(**attrs)
 
 	return setup
 
