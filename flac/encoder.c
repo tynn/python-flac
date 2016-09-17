@@ -1154,11 +1154,11 @@ _int32_array (PyObject *obj, FLAC__int32 **addr)
 				break;
 
 			val = PyInt_AsLong(item);
+			Py_DECREF(item);
 			if ((val == -1 && PyErr_Occurred()) || val != (FLAC__int32) val)
 				break;
 
 			buffer[i+1] = val;
-			Py_DECREF(item);
 		}
 
 		if (count != i)
